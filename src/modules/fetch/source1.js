@@ -1,14 +1,17 @@
-const fs = require("fs").promises;
-const path = require("path")
-const puppeteer = require("puppeteer");
+import fs from 'fs/promises';
+import { resolve } from 'path';
+import puppeteer from 'puppeteer';
+import dotenv from 'dotenv';
+dotenv.config({ path: resolve('../../.env') });
 
-const delay = require("../helper/delay");
-const URL = ''
+import delay from '../helper/delay.js';
+const SOURCE_URL = process.env.SOURCE_1;
+
+import path from 'path';
 
 const filePath = path.resolve("../data/source1/stories.json");
 
-
-async function getFirstData() {
+export default async function getFirstData() {
     try{
         const browser = await puppeteer.launch({
             headless: true,
@@ -21,7 +24,7 @@ async function getFirstData() {
         console.log("delay successfully");
         const page = await browser.newPage();
         
-        await page.goto(URL, {
+        await page.goto(SOURCE_URL, {
             waitUntil: "load",
             timeout: 60000
         });
@@ -67,6 +70,8 @@ async function getFirstData() {
 }
 
 
+
+
 // Auto-scroll function
 async function autoScroll(page) {
     await page.evaluate(async () => {
@@ -86,10 +91,3 @@ async function autoScroll(page) {
     });
 }
 
-
-
-
-
-
-
-module.exports = getFirstData;

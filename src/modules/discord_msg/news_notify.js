@@ -1,30 +1,33 @@
-const axios = require('axios');
-const FormData = require('form-data');
-const path = require('path');
+import axios from 'axios';
+import FormData from 'form-data';
+import { resolve } from 'path';
+import delay from '../helper/delay.js';
+import dotenv from 'dotenv';
 
-require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: resolve('../../.env') });
 
-const discordWebhookUrl = process.env.DISCORD_WEBHOOK;
+const DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK;
 
-// Utility function to introduce delay
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
-async function sendWebhook(headline, imageURL) {
-  const webhookUrl = discordWebhookUrl;
+export default async function sendWebhook(headline, imageURL, postUrl) {
+  const webhookUrl = DISCORD_WEBHOOK;
   try {
     const embed = {
-      title: 'TinTang News',
+      title: headline,
       color: 5763719,
+      author: {
+        name: '7tinh Hub News',
+        icon_url: 'https://media.discordapp.net/attachments/1303904551417413642/1343342344086224906/image.png?ex=67bcec8c&is=67bb9b0c&hm=eb9327c9c3e61e714d710a34c2f64dc5506452adb696ffe6420503200d634ef2&=&format=webp&quality=lossless&width=653&height=278',
+        url: 'https://www.youtube.com/@ttintang',
+      },
       fields: [
         {
-          name: 'Headline',
-          value: `${headline}`,
+          name: "",
+          value: `[Learn more](${postUrl})`,
           inline: true,
-        }
+        },
       ],
-      thumbnail: {
+      image: {
         url: imageURL,
       },
       footer: {
@@ -72,4 +75,4 @@ async function sendWebhook(headline, imageURL) {
   }
 }
 
-module.exports = sendWebhook;
+// module.exports = sendWebhook;
