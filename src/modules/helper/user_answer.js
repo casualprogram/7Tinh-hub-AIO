@@ -7,7 +7,7 @@ export default async function askUser(){
         name: 'player_option',
         message: 'Pick a module',
         choices: [
-            'Fetch News',
+            'Push News',
             'Option B',
             'Option C',
             'Exit'

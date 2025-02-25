@@ -1,32 +1,31 @@
 import { resolve } from 'path';
-import getFirstData from './fetch/source1.js';
+import getFirstData from './fetch/fetch_source_1.js';
 import delay from './helper/delay.js';
 import formattedFirstData from './helper/formatting_data.js';
 import path from 'path';
 import gradient from 'gradient-string';
 import figlet from 'figlet';
 import askUser from './helper/user_answer.js';      
+import push_news from '../interfaces/push_news.js';
 
 const filepath = path.resolve("../data/source1/stories.json");
 
 async function CLI_Interface() {
-    
-    // getFirstData();
-    // await delay(30000);
 
     const welcomeMsg = "7tinh Hub tools";
 
     await figlet(welcomeMsg, function(err, data) {
         console.log(gradient.pastel.multiline(data));
-        console.log(gradient.pastel.multiline("\t \t \t \t \t \tpowered by casual solutions"));
+        console.log(gradient.pastel.multiline("\t \t \t \t \t \tpowered by casual solutions\n"));
     }
     );
 
     const optionFromUser = await askUser();
 
     switch(optionFromUser.player_option){
-        case ('Fetch First-source News'):
-            // await getFirstData();
+        case ('Push News'):
+            console.log("Push News");
+            push_news();
             console.log("THEN SOURCE 1 MODULE RUNS")
             break; // for now
             

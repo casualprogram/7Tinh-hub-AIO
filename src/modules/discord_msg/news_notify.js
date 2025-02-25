@@ -4,13 +4,10 @@ import { resolve } from 'path';
 import delay from '../helper/delay.js';
 import dotenv from 'dotenv';
 
-dotenv.config({ path: resolve('../../.env') });
-
-const DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK;
-
+dotenv.config({ path: resolve('../../../.env') });
 
 export default async function sendWebhook(headline, imageURL, postUrl) {
-  const webhookUrl = DISCORD_WEBHOOK;
+  const webhookUrl = process.env.DISCORD_WEBHOOK;
   try {
     const embed = {
       title: headline,
@@ -49,8 +46,7 @@ export default async function sendWebhook(headline, imageURL, postUrl) {
     const remainingRequests = response.headers['x-ratelimit-remaining'];
     const resetTime = response.headers['x-ratelimit-reset'];
 
-    console.log(`Remaining requests: ${remainingRequests}`);
-    console.log(`Rate limit resets at: ${new Date(resetTime * 1000)}`);
+
 
     if (remainingRequests === '0') {
       const retryAfter = response.headers['retry-after'];
@@ -63,7 +59,7 @@ export default async function sendWebhook(headline, imageURL, postUrl) {
       const retryAfter = error.response.headers['retry-after'];
       console.log(`Rate limited! Retry after ${retryAfter} milliseconds.`);
       await delay(retryAfter); // Wait for the specified time before retrying
-      await sendWebhook(headline, imageURL); // Retry the webhook after waiting
+      await sendWebhook(headline, imageURL, postUrl); // Retry the webhook after waiting
     } else {
       console.error('Error sending webhook:', error);
       if (error.response) {
@@ -75,4 +71,4 @@ export default async function sendWebhook(headline, imageURL, postUrl) {
   }
 }
 
-// module.exports = sendWebhook;
+
