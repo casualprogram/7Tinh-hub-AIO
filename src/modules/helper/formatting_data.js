@@ -24,7 +24,6 @@ export default async function formattedData(filePath) {
             // Loop through the stories
             for (const story of stories) {
                 if (isWithin23HoursSource1(story.timestamp)) {
-                    console.log("COMPLEX")
                     await delay(500);
                     const headline = story.headline;
                     const imageURL = story.pictureUrl;
@@ -33,13 +32,12 @@ export default async function formattedData(filePath) {
                     await sendWebhook(headline, imageURL, postUrl);
                 }
             }
-            
+
         // check for file name
         } else if (fileName === "stories2.json"){
             // Loop through the stories
             for (const story of stories) {
                 await delay(500);
-                console.log("HYPEBEAST")
                 const headline = story.title;
                 const imageURL = story.imageUrl;
                 const postUrl = story.postUrl;
