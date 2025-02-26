@@ -2,12 +2,12 @@
 
 
 /**
- * isWithin23Hours
+ * isWithin23HoursSource1
  * @description This function checks if the timestamp is within 23 hours. 
  * @param {*} timestamp  - The timestamp to check.
  * @returns  - Returns true if the timestamp is within 23 hours, otherwise false.
  */
-export default function isWithin23Hours(timestamp){
+export default function isWithin23HoursSource1(timestamp){
     const match = timestamp.match(/(\d+)\s+(hour|day)s?\s+ago/i);
     if (!match) return false;
 
@@ -22,3 +22,6 @@ export default function isWithin23Hours(timestamp){
     }
     return false;
 }
+
+
+
