@@ -26,10 +26,9 @@ async function CLI_Interface() {
 
     switch(optionFromUser.player_option){
         case ('Push News'):
-            console.log("Push News");
+            console.log(" PUSH OUT THE NEWS");
             push_news();
-            console.log("THEN SOURCE 1 MODULE RUNS")
-            break; // for now
+            break;
             
         case('Option B'):
             console.log("Option B");
