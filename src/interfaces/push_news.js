@@ -11,14 +11,18 @@ const SOURCE_URL_1 = process.env.SOURCE_1;
 
 const filePath = path.resolve('../data/source1/stories.json');
 
+
+/**
+ * @description - This function is the interface, connected to the CLI.
+ *               It is responsible for calling the functions that fetch the data from the source and format it.
+ */
 export default async function push_news(){
-
+    // Fetch the data from the source
     await getFirstData(filePath, SOURCE_URL_1);
+    console.log("\n----------\n ---> SUCCESSFULLY FETCH COMPLEX DATA\n----------");
 
-    console.log("\n----------\t ---> SUCCESSFULLY FETCH COMPLEX DATA\n----------");
-
+    // Format the data and send it to the community
     await formattedFirstData(filePath);
-
-    console.log("\n----------\\t --> SEND TO THE COMMUNITY...\n----------");
+    console.log("\n----------\n --> SEND TO THE COMMUNITY...\n----------");
     
 }

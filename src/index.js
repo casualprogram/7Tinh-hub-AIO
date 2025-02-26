@@ -3,16 +3,9 @@ dotenv.config({ path: resolve('../.env') });
 
 import { resolve } from 'path';
 
-const DISCORD_WEBHOOK_KEY = process.env.DISCORD_WEBHOOK;
-
-import formattedFirstData from './modules/helper/formatting_data.js';
-import { getFirstData } from './modules/fetch/fetch_source_1.js';
-import delay from './modules/helper/delay.js';
-import { sendWebhook } from './modules/discord_msg/news_notify.js';
-
-
 async function main() {
-    
+    //TODO consider using a logger to log the start of the application
+    console.log('Application started');
 }
 
 main();
