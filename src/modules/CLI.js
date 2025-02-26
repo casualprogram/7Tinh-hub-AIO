@@ -1,7 +1,3 @@
-import { resolve } from 'path';
-import getFirstData from './fetch/fetch_source_1.js';
-import delay from './helper/delay.js';
-import formattedFirstData from './helper/formatting_data.js';
 import path from 'path';
 import gradient from 'gradient-string';
 import figlet from 'figlet';
@@ -10,6 +6,12 @@ import push_news from '../interfaces/push_news.js';
 
 const filepath = path.resolve("../data/source1/stories.json");
 
+
+/**
+ * @description - This function is the CLI interface.
+ * It is responsible for calling the functions that fetch the data from the source and format it.
+ * It also calls the function that asks the user to choose a module.
+ */
 async function CLI_Interface() {
 
     const welcomeMsg = "7tinh Hub tools";

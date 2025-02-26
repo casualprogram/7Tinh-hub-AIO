@@ -1,5 +1,10 @@
 import inquirer from 'inquirer';
 
+
+/**
+ * @description This function is responsible for asking the user to choose a module
+ * @returns the user choice
+ */
 export default async function askUser(){
 
     const answer = await inquirer.prompt({
