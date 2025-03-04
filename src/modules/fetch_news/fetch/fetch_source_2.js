@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import axios from 'axios';
 import fs from 'fs/promises';
 import isWithin23HoursSource2 from '../helper/time_filter_src_2.js';
-dotenv.config({ path: resolve('../../../.env') });
+dotenv.config({ path: resolve('../../../../.env') });
 
 
 /**

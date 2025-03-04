@@ -1,9 +1,9 @@
-import getFirstData from "../modules/fetch/fetch_source_1.js";
-import formattedData from "../modules/helper/formatting_data.js";
+import getFirstData from "../modules/fetch_news/fetch/fetch_source_1.js";
+import formattedData from "../modules/fetch_news/helper/formatting_data.js";
 import { resolve } from 'path';
 import path from 'path';
 import dotenv from 'dotenv';
-import getSecondData from '../modules/fetch/fetch_source_2.js';
+import getSecondData from '../modules/fetch_news/fetch/fetch_source_2.js';
 
 
 dotenv.config({ path: resolve('../../.env') });

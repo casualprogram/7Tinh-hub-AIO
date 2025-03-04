@@ -1,10 +1,10 @@
 import axios from 'axios';
 import FormData from 'form-data';
 import { resolve } from 'path';
-import delay from '../helper/delay.js';
+import delay from '../../module_util/delay.js';
 import dotenv from 'dotenv';
 
-dotenv.config({ path: resolve('../../../.env') });
+dotenv.config({ path: resolve('../../../../.env') });
 
 
 /**
@@ -15,7 +15,7 @@ dotenv.config({ path: resolve('../../../.env') });
  */
 export default async function sendWebhook(headline, imageURL, postUrl) {
   // The Discord webhook
-  const webhookUrl = process.env.DISCORD_WEBHOOK;
+  const webhookUrl = process.env.NEWS_DISCORD_WEBHOOK;
   try {
     // Create embed structure object message to send to Discord
     const embed = {
@@ -58,7 +58,7 @@ export default async function sendWebhook(headline, imageURL, postUrl) {
     // Log the remaining requests and the rate limit reset time
     const remainingRequests = response.headers['x-ratelimit-remaining'];
     const resetTime = response.headers['x-ratelimit-reset'];
-    console.log(`Remaining requests: ${remainingRequests}`);
+
     console.log(`Rate limit resets at: ${new Date(resetTime * 1000)}`);
 
     // If the remaining requests are 0, we are being rate limited by Discord

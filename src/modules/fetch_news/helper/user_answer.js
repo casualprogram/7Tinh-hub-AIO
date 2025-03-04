@@ -12,9 +12,9 @@ export default async function askUser(){
         name: 'player_option',
         message: 'Pick a module',
         choices: [
-            'Push News',
-            'Option B',
-            'Option C',
+            '1. Push News',
+            '2. Fetch Stock',
+            '3. Option C',
             'Exit'
         ],
         default() {

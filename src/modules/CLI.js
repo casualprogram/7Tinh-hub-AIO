@@ -1,10 +1,9 @@
-import path from 'path';
+
 import gradient from 'gradient-string';
 import figlet from 'figlet';
-import askUser from './helper/user_answer.js';      
+import askUser from './fetch_news/helper/user_answer.js';      
 import push_news from '../interfaces/push_news.js';
-
-const filepath = path.resolve("../data/source1/stories.json");
+import push_stock from '../interfaces/push_stock.js';
 
 
 /**
@@ -16,24 +15,27 @@ async function CLI_Interface() {
 
     const welcomeMsg = "7tinh Hub tools";
 
-    await figlet(welcomeMsg, function(err, data) {
-        console.log(gradient.pastel.multiline(data));
-        console.log(gradient.pastel.multiline("\t \t \t \t \t \tpowered by casual solutions\n"));
-    }
-    );
-
+    const welcomeText = await figlet.text(welcomeMsg, {
+        font: "Standard", // Default font, or pick one you like
+        horizontalLayout: "smushing",
+        verticalLayout: "smushing",
+        width: 80,
+        whitespaceBreak: true,
+      });
+      console.log(gradient.pastel.multiline(welcomeText));
+      console.log(gradient.pastel.multiline("\t \t \t \t \t \tpowered by casual solutions\n"));
     const optionFromUser = await askUser();
 
     switch(optionFromUser.player_option){
-        case ('Push News'):
-            console.log(" PUSH OUT THE NEWS");
+        case ('1. Push News'):
+            console.log(" RUNNING NEWS MODULE");
             push_news();
             break;
-            
-        case('Option B'):
-            console.log("Option B");
+        case('2. Fetch Stock'):
+            console.log("RUNNING STOCK MODULE");
+            push_stock();
             break;
-        case('Option C'):
+        case('3. Option C'):
             console.log("Option C");
             break;
         case('Exit'):
