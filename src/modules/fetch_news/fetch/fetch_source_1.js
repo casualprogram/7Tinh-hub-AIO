@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import puppeteer from 'puppeteer';
-import delay from '../helper/delay.js';
+import delay from '../../module_util/delay.js';
 import autoScroll from '../helper/auto_scroll.js';
 
 
@@ -60,7 +60,3 @@ export default async function getFirstData(filePath, SOURCE_URL) {
         console.log("Error at source 1 scrapping\n Contact Devs team \n", e);
     }
 }
-
-
-
-

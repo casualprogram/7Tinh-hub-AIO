@@ -7,7 +7,6 @@
 
 export default function isWithin23HoursSource2(timestamp){
     const date = new Date(timestamp);
-    console.log("source 2 date - ", date);
     if(isNaN(date.getTime())){
         return false;
     }
