@@ -1,7 +1,7 @@
 import axios from 'axios';
 import FormData from 'form-data';
 import { resolve } from 'path';
-import delay from '../../module_util/delay.js';
+import delay from '../../fetch_news/helper/delay.js';
 import dotenv from 'dotenv';
 
 dotenv.config({ path: resolve('../../../../.env') });

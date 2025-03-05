@@ -5,6 +5,7 @@ import sendWebhook from '../utilities/send_webhook.js';
 
 dotenv.config({ path: resolve('../../../../.env') });
 
+
 /**
  * @fetchStock - This function fetches stock data from the API and sends a webhook to Discord. 
  * @param {*} product_sku - The product SKU to fetch stock for from user input.

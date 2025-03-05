@@ -1,5 +1,5 @@
 import fs from 'fs/promises';
-import delay from '../../module_util/delay.js';
+import delay from './delay.js';
 import sendWebhook from '../discord_msg/news_notify.js';
 import isWithin23HoursSource1 from './time_filter_src_1.js';
 

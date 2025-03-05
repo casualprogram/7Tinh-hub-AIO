@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import puppeteer from 'puppeteer';
-import delay from '../../module_util/delay.js';
+import delay from '../helper/delay.js';
 import autoScroll from '../helper/auto_scroll.js';
 import { resolve } from 'path';
 import path from 'path';
