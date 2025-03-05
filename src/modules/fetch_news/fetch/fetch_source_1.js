@@ -2,6 +2,10 @@ import fs from 'fs/promises';
 import puppeteer from 'puppeteer';
 import delay from '../../module_util/delay.js';
 import autoScroll from '../helper/auto_scroll.js';
+import { resolve } from 'path';
+import path from 'path';
+import dotenv from 'dotenv';
+dotenv.config({ path: resolve('../../../../.env') });
 
 
 /**
@@ -10,7 +14,9 @@ import autoScroll from '../helper/auto_scroll.js';
  * @param {*} SOURCE_URL  - The URL of the source. 
  * @returns 
  */
-export default async function getFirstData(filePath, SOURCE_URL) {
+export default async function getFirstData() {
+    const SOURCE_URL = process.env.SOURCE_1;
+    const filePath = path.resolve('../../src/data/source1/stories.json');
     try{
         // Launch the browser
         const browser = await puppeteer.launch({

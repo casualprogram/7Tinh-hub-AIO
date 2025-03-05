@@ -4,12 +4,7 @@ import { resolve } from 'path';
 import path from 'path';
 import dotenv from 'dotenv';
 import getSecondData from '../modules/fetch_news/fetch/fetch_source_2.js';
-
-
 dotenv.config({ path: resolve('../../.env') });
-
-const SOURCE_URL_1 = process.env.SOURCE_1;
-
 const filePath1 = path.resolve('../data/source1/stories.json');
 const filePath2 = path.resolve('../data/source1/stories2.json');
 
@@ -20,7 +15,7 @@ const filePath2 = path.resolve('../data/source1/stories2.json');
  */
 export default async function push_news(){
     // Fetch the data from the source
-    await getFirstData(filePath1, SOURCE_URL_1);
+    await getFirstData();
     console.log("\n----------\n ---> SUCCESSFULLY FETCH FIRST DATA\n----------");
 
     console.log("\n----------\n ---> SUCCESSFULLY FETCH SECOND DATA\n----------");
@@ -29,7 +24,7 @@ export default async function push_news(){
 
     // Format the data and send it to the community
     await formattedData(filePath1);
-    await formattedData(filePath2)
+    // await formattedData(filePath2)
 
     console.log("\n----------\n --> SEND TO THE COMMUNITY...\n----------");
     
