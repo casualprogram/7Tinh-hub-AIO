@@ -14,7 +14,9 @@ export default async function askUser(){
         choices: [
             '1. Push News',
             '2. Fetch Stock',
-            '3. Option C',
+            '3. Fetch Release',
+            '4. Option D',
+            '5. Option E',
             'Exit'
         ],
         default() {
