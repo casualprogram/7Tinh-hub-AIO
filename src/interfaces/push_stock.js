@@ -9,7 +9,7 @@ import read_line from '../modules/module_util/read_line.js';
  */
 export default async function push_stock(){
 
-    // const SKU = await read_line("Enter the SKU: ");
+    const SKU = await read_line("Enter the SKU: ");
     console.log("\t\tReceived ->", SKU);
 
     await fetchStock(SKU);
