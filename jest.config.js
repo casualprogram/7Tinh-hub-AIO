@@ -1,9 +1,10 @@
-// File: jest.config.js (ESM)
+// jest.config.js
 export default {
-    testEnvironment: 'node',
-    transform: {},
+    testEnvironment: 'node', // Node.js environment
     moduleNameMapper: {
-      '^(\\.{1,2}/.*)\\.js$': '$1',
+      '^(\\.{1,2}/.*)\\.js$': '$1', // Handle .js imports
     },
-    testMatch: ['**/test/**/*.test.js'], // Add this line to include your test directory
+    testMatch: ['**/test/**/*.test.js'], // Match your test files
+    transform: {}, // No transforms needed for native ESM
+    setupFiles: ['<rootDir>/jest.setup.js'], // Load .env
   };
