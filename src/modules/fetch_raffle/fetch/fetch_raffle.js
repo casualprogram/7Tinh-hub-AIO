@@ -5,7 +5,7 @@ import autoScroll from '../../module_util/auto_scroll.js';
 import { resolve } from 'path';
 import path from 'path';
 import dotenv from 'dotenv';
-import axios from 'axios';
+import { load as cheerio } from 'cheerio'; // Named import
 dotenv.config({ path: resolve('../../../../.env') });
 
 
@@ -34,18 +34,55 @@ export default async function fetchRaffle(SKU){
           });
 
         const html = await page.content();
-        console.log('Fully rendered HTML fetched from Puppeteer');
 
-        const pathFile = path.resolve('../../../data/raffle/raffle.html');
-        await fs.writeFile(pathFile, JSON.stringify(html, null, 2), {encoding: "utf-8"});
+
+        const pathFlieHTML = path.resolve('../../../data/raffle/raffle.html');
+        await fs.writeFile(pathFlieHTML, html, {encoding: "utf-8"});
+
+        const $ = cheerio(html);
+
+        const titleElement = $('div.slide-title h4');
+        const title = titleElement.text().trim() || 'N/A';
+
+        // Extract Image
+        const image = $('div.slider-img-cnt-blk img').attr('src') || 'N/A';
+
+        const retailers = [];
+        
+        $('table tbody tr').each((index, element) => {
+          const retailerName = $(element).find('td.retailer-col a span').text().trim() || 'N/A';
+          const retailerUrl = $(element).find('td.retailer-col a').attr('href') || 'N/A';
+          const timeOfRelease = $(element).find('td.time-col span').text().trim() || 'N/A';
+          const releaseType = $(element).find('td.release-type span').text().trim() || 'N/A';
+    
+            if (retailerUrl !== "N/A"){
+                retailers.push({
+                    name: retailerName,
+                    url: retailerUrl,
+                    timeOfRelease,
+                    releaseType,
+                });
+            }
+        });
+
+        const raffleData = {
+            title,
+            image,
+            retailers,
+          };
+
+        const pathFile = path.resolve('../../../data/raffle/raffleJson.json');
+        await fs.writeFile(pathFile, JSON.stringify(raffleData, null, 2), {encoding: "utf-8"});
         console.log("File written successfully");
 
+        await page.close();
 
     } catch (error) {
         console.log("Error fetching the raffle", error);
     }
 
+    return;
 }
 
 
-fetchRaffle("311090-100");
+fetchRaffle("CT8013-002");

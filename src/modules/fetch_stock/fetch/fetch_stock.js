@@ -65,7 +65,7 @@ export default async function fetchStock(product_sku) {
 
     // Calculate sizeWithStockNumber
     const sizeWithStockNumber = [];
-    for (const product of filteredProducts) { // Using for...of for clarity
+    for (const product of filteredProducts) { 
       for (const sku of product.skus) {
         const gtin = product.availableGtins.find(g => g.gtin === sku.gtin);
         if (gtin) {
