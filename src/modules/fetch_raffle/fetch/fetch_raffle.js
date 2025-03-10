@@ -6,6 +6,7 @@ import { resolve } from 'path';
 import path from 'path';
 import dotenv from 'dotenv';
 import { load as cheerio } from 'cheerio'; // Named import
+import sendWebhook from '../utilities/send_webhook.js';
 dotenv.config({ path: resolve('../../../../.env') });
 
 
@@ -42,13 +43,13 @@ export default async function fetchRaffle(SKU){
         const $ = cheerio(html);
 
         const titleElement = $('div.slide-title h4');
-        const title = titleElement.text().trim() || 'N/A';
+        const productTitle = titleElement.text().trim() || 'N/A';
 
         // Extract Image
         const image = $('div.slider-img-cnt-blk img').attr('src') || 'N/A';
 
         const retailers = [];
-        
+
         $('table tbody tr').each((index, element) => {
           const retailerName = $(element).find('td.retailer-col a span').text().trim() || 'N/A';
           const retailerUrl = $(element).find('td.retailer-col a').attr('href') || 'N/A';
@@ -57,8 +58,7 @@ export default async function fetchRaffle(SKU){
     
             if (retailerUrl !== "N/A"){
                 retailers.push({
-                    name: retailerName,
-                    url: retailerUrl,
+                    name: "["+retailerName+"]"+"("+retailerUrl+")",
                     timeOfRelease,
                     releaseType,
                 });
@@ -66,16 +66,24 @@ export default async function fetchRaffle(SKU){
         });
 
         const raffleData = {
-            title,
+            productTitle,
             image,
             retailers,
           };
 
         const pathFile = path.resolve('../../../data/raffle/raffleJson.json');
         await fs.writeFile(pathFile, JSON.stringify(raffleData, null, 2), {encoding: "utf-8"});
+        console.log("retaile", retailers);  
         console.log("File written successfully");
 
-        await page.close();
+        await browser.close();
+
+
+        try{
+            await sendWebhook(productTitle, image, retailers);
+        } catch (error) {
+            console.log("Error sending the webhook", error);
+        }
 
     } catch (error) {
         console.log("Error fetching the raffle", error);
@@ -85,4 +93,4 @@ export default async function fetchRaffle(SKU){
 }
 
 
-fetchRaffle("CT8013-002");
+fetchRaffle("hv4794-011");
