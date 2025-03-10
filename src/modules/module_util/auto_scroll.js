@@ -1,4 +1,4 @@
-import delay from './delay.js';
+import delay from '../module_util/delay.js';
 
 /**
  * @description - This function is responsible for scrolling the page to load more content.
