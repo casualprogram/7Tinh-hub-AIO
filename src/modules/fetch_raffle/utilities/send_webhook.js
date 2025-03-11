@@ -14,7 +14,7 @@ dotenv.config({ path: resolve('../../../../.env') });
  */
 export default async function sendWebhook(productTitle, productPhoto, retailers) {
   // The Discord webhook
-  const webhookUrl = process.env.NIKE_STOCK_DISCORD_WEBHOOK;
+  const webhookUrl = process.env.RELEASE_INFO_DISCORD;
 
   try {
     // Generate retailer lines

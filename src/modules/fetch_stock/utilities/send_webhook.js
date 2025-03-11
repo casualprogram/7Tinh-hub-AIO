@@ -28,7 +28,7 @@ export default async function sendWebhook(productTitle, productSKU, releaseMetho
       title: `${productTitle}`,
       color: 5763719,
       author: {
-        name: '7tinh Hub News',
+        name: '7tinh Hub',
         icon_url: 'https://media.discordapp.net/attachments/1303904551417413642/1343342344086224906/image.png?ex=67bcec8c&is=67bb9b0c&hm=eb9327c9c3e61e714d710a34c2f64dc5506452adb696ffe6420503200d634ef2&=&format=webp&quality=lossless&width=653&height=278',
         url: 'https://www.youtube.com/@ttintang',
       },      
