@@ -17,20 +17,20 @@ const filePath2 = path.resolve('../data/source1/stories2.json');
  */
 export default async function push_news(){
     // Fetch the data from the source
-    // await getFirstData();
-    // console.log("\n----------\n ---> SUCCESSFULLY FETCH FIRST DATA\n----------");
-
-    // console.log("\n----------\n ---> SUCCESSFULLY FETCH SECOND DATA\n----------");
-    // await getSecondData();
+    await getFirstData();
+    console.log("\n----------\n ---> SUCCESSFULLY FETCH FIRST DATA\n----------");
 
 
-    // Format the data and send it to the community
-    // await formattedData(filePath1);
-    // await formattedData(filePath2)
+    await getSecondData();
+    console.log("\n----------\n ---> SUCCESSFULLY FETCH SECOND DATA\n----------");
 
-    console.log("\n----------\n ---> SUCCESSFULLY FETCH THIRD DATA\n----------");
+
     await getThirdData();
+    console.log("\n----------\n ---> SUCCESSFULLY FETCH THIRD DATA\n----------");
 
+    
     console.log("\n----------\n --> SEND TO THE COMMUNITY...\n----------");
     
 }
+
+push_news();

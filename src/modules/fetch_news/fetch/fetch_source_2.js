@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import axios from 'axios';
 import fs from 'fs/promises';
 import isWithin23HoursSource2 from '../helper/time_filter_src_2.js';
+import sendWebhook from '../discord_msg/news_notify.js';
 dotenv.config({ path: resolve('../../../../.env') });
 
 
@@ -13,8 +14,6 @@ export default async function getSecondData(){
     try{
         // Fetch the data from the source 
         const SOURCE_URL_2 = process.env.SOURCE_2;
-        const filePath = path.resolve('../../src/data/source1/stories2.json');
-
         
         // Fetch the data from the source
         const response = await axios.get(SOURCE_URL_2,{
@@ -43,11 +42,13 @@ export default async function getSecondData(){
             info: item.title,
             postUrl: item.postUrl,
             imageUrl: item.imageUrl,
-            timestamp: item.timestamp
+            timestamp: item.timestamp,
+            
         }));
         
-        // Write the data to the file system
-        await fs.writeFile(filePath, JSON.stringify(recentData, null, 2)), {encoding: "utf-8"};
+        for (let i = 0; i < recentData.length; i++) {
+            await sendWebhook(recentData[i].title, recentData[i].imageUrl, recentData[i].postUrl);
+        }
 
 
     } catch(e){

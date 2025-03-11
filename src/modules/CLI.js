@@ -1,7 +1,7 @@
 
 import gradient from 'gradient-string';
 import figlet from 'figlet';
-import askUser from './fetch_news/helper/user_answer.js';      
+import askUser from './module_util/user_answer.js';      
 import push_news from '../interfaces/push_news.js';
 import push_stock from '../interfaces/push_stock.js';
 import push_release_info from '../interfaces/push_release.js';

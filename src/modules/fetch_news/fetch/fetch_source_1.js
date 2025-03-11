@@ -6,6 +6,8 @@ import { resolve } from 'path';
 import path from 'path';
 import dotenv from 'dotenv';
 dotenv.config({ path: resolve('../../../../.env') });
+import isWithin23HoursSource1 from '../helper/time_filter_src_1.js';
+import sendWebhook from '../discord_msg/news_notify.js';
 
 
 /**
@@ -16,7 +18,6 @@ dotenv.config({ path: resolve('../../../../.env') });
  */
 export default async function getFirstData() {
     const SOURCE_URL = process.env.SOURCE_1;
-    const filePath = path.resolve('../../src/data/source1/stories.json');
     try{
         // Launch the browser
         const browser = await puppeteer.launch({
@@ -56,11 +57,22 @@ export default async function getFirstData() {
                 };
             });
         });
-        // Write the data to the file system
-        await fs.writeFile(filePath, JSON.stringify(scrapedData, null, 2)), {encoding: "utf-8"};
+
         // Close the browser
         await browser.close();
-        return scrapedData;
+        console.log("Scraped data is : ", scrapedData);
+        console.log("Scraped data time is : ", scrapedData[0].timestamp);
+
+        
+        for (let i = 0; i < scrapedData.length; i++) {
+            if (isWithin23HoursSource1(scrapedData[i].timestamp)) {
+                await delay(500);
+                const headline = scrapedData[i].headline;
+                const imageURL = scrapedData[i].pictureUrl;
+                const postUrl = scrapedData[i].postUrl;
+                await sendWebhook(headline, imageURL, postUrl);
+            }
+        }
 
     } catch(e){
         console.log("Error at source 1 scrapping\n Contact Devs team \n", e);
