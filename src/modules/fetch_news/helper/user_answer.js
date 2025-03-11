@@ -10,13 +10,13 @@ export default async function askUser(){
     const answer = await inquirer.prompt({
         type: 'list',
         name: 'player_option',
-        message: 'Pick a module',
+        message: 'Pickle a module',
         choices: [
             '1. Push News',
             '2. Fetch Stock',
-            '3. Fetch Release',
-            '4. Option D',
-            '5. Option E',
+            '3. Fetch Release Info',
+            '4. New Modules Coming Soon',
+            '5. New Modules Coming Soon',
             'Exit'
         ],
         default() {

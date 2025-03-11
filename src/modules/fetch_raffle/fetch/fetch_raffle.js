@@ -10,12 +10,10 @@ import sendWebhook from '../utilities/send_webhook.js';
 dotenv.config({ path: resolve('../../../../.env') });
 
 
-
 export default async function fetchRaffle(SKU){
     
     const url = process.env.RAFFLE_URL + SKU;
-    console.log("Fetched URL", url);
-
+    
     try{
         const browser = await puppeteer.launch({
             headless: true,
@@ -30,15 +28,12 @@ export default async function fetchRaffle(SKU){
           );
           
           await page.goto(url, {
-            waitUntil: 'networkidle2', // Wait for network to settle
+            waitUntil: 'networkidle2', 
             timeout: 60000,
           });
 
         const html = await page.content();
 
-
-        const pathFlieHTML = path.resolve('../../../data/raffle/raffle.html');
-        await fs.writeFile(pathFlieHTML, html, {encoding: "utf-8"});
 
         const $ = cheerio(html);
 
@@ -56,7 +51,7 @@ export default async function fetchRaffle(SKU){
           const timeOfRelease = $(element).find('td.time-col span').text().trim() || 'N/A';
           const releaseType = $(element).find('td.release-type span').text().trim() || 'N/A';
     
-            if (retailerUrl !== "N/A"){
+            if ((retailerUrl !== "N/A") && (retailerName !== 'eBay')){
                 retailers.push({
                     name: "["+retailerName+"]"+"("+retailerUrl+")",
                     timeOfRelease,
@@ -64,17 +59,6 @@ export default async function fetchRaffle(SKU){
                 });
             }
         });
-
-        const raffleData = {
-            productTitle,
-            image,
-            retailers,
-          };
-
-        const pathFile = path.resolve('../../../data/raffle/raffleJson.json');
-        await fs.writeFile(pathFile, JSON.stringify(raffleData, null, 2), {encoding: "utf-8"});
-        console.log("retaile", retailers);  
-        console.log("File written successfully");
 
         await browser.close();
 
@@ -93,4 +77,3 @@ export default async function fetchRaffle(SKU){
 }
 
 
-fetchRaffle("hv4794-011");

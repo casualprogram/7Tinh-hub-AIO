@@ -4,6 +4,7 @@ import figlet from 'figlet';
 import askUser from './fetch_news/helper/user_answer.js';      
 import push_news from '../interfaces/push_news.js';
 import push_stock from '../interfaces/push_stock.js';
+import push_release_info from '../interfaces/push_release.js';
 
 
 /**
@@ -24,8 +25,8 @@ async function CLI_Interface() {
       });
       console.log(gradient.pastel.multiline(welcomeText));
       console.log(gradient.pastel.multiline("\t \t \t \t \t \tpowered by casual solutions\n"));
-    const optionFromUser = await askUser();
-
+    const optionFromUser = await askUser(); //fetch stock
+ 
     switch(optionFromUser.player_option){
         case ('1. Push News'):
             console.log(" RUNNING NEWS MODULE");
@@ -35,8 +36,9 @@ async function CLI_Interface() {
             console.log("RUNNING STOCK MODULE");
             push_stock();
             break;
-        case('3. Option C'):
-            console.log("Option C");
+        case('3. Fetch Release Info'):
+            console.log("RUNNING RELEASE MODULE");
+            push_release_info();
             break;
         case('Exit'):
             console.log(
