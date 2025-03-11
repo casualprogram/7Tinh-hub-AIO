@@ -1,11 +1,12 @@
-// import dotenv from 'dotenv';
-// dotenv.config({ path: resolve('../.env') });
+import dotenv from 'dotenv';
+import axios from 'axios';
+import fs from 'fs/promises';
+import { resolve } from 'path';
 
-// import { resolve } from 'path';
+dotenv.config({ path: resolve('../.env') });
 
-// async function main() {
-//     //TODO consider using a logger to log the start of the application
-//     console.log('Application started');
-// }
+async function main() {
+ 
+}
 
-// main();
+main();

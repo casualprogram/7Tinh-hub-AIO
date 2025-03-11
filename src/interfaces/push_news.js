@@ -24,7 +24,7 @@ export default async function push_news(){
 
     // Format the data and send it to the community
     await formattedData(filePath1);
-    // await formattedData(filePath2)
+    await formattedData(filePath2)
 
     console.log("\n----------\n --> SEND TO THE COMMUNITY...\n----------");
     

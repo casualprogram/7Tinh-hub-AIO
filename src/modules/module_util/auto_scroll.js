@@ -1,4 +1,4 @@
-import delay from './delay.js';
+import delay from '../module_util/delay.js';
 
 /**
  * @description - This function is responsible for scrolling the page to load more content.
@@ -25,7 +25,7 @@ export default async function autoScroll(page) {
         }
         // If the maximum number of attempts is reached, stop scrolling
         if (i === maxAttempts - 1) {
-            console.log("Max attempts reached, stopping scroll. Cards found, please contact the Devs", currentCardCount);
+            console.log("Max attempts reached, stopping scroll.", currentCardCount);
             break;
         }
         // Update the previous card count and wait for the page to load

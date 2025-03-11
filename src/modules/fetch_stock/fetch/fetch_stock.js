@@ -2,6 +2,8 @@ import path, { resolve } from 'path';
 import dotenv from 'dotenv';
 import axios from 'axios';
 import sendWebhook from '../utilities/send_webhook.js';
+import fs from 'fs/promises';
+
 
 dotenv.config({ path: resolve('../../../../.env') });
 
@@ -53,6 +55,8 @@ export default async function fetchStock(product_sku) {
       return; 
     }
 
+    const filePath = path.resolve('../../src/data/source1/snkrs.json');
+    await fs.writeFile(filePath, JSON.stringify(filteredProducts, null, 2), { encoding: 'utf-8' });
 
     // Collecting data
     const productTitle = filteredProducts.map(product => product.merchProduct.labelName);
@@ -61,7 +65,7 @@ export default async function fetchStock(product_sku) {
 
     // Calculate sizeWithStockNumber
     const sizeWithStockNumber = [];
-    for (const product of filteredProducts) { // Using for...of for clarity
+    for (const product of filteredProducts) { 
       for (const sku of product.skus) {
         const gtin = product.availableGtins.find(g => g.gtin === sku.gtin);
         if (gtin) {
