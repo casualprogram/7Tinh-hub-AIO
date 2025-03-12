@@ -15,7 +15,7 @@ export default async function askUser(){
             '1. Push News',
             '2. Fetch Stock',
             '3. Fetch Release Info',
-            '4. New Modules Coming Soon',
+            '4. Fetch Weekly Trending',
             '5. New Modules Coming Soon',
             'Exit'
         ],

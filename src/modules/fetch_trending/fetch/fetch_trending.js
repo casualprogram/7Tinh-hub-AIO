@@ -5,15 +5,14 @@ import fs from 'fs/promises';
 import sendWebhook from '../utilities/send_webhook.js';
 dotenv.config({ path: path.resolve('../../../../.env') });
 
-
+/**
+ * @description - This function fetches weekly trending data from the API and sends a webhook to Discord.
+ * @returns  - Sends a webhook to Discord with the weekly trending data.
+ */
 export default async function fetchWeeklyTrending(){
-    console.log("Fetching Weekly Trending");
-
-    const filePath = path.resolve('../../../data/trend.json');
 
     const url = process.env.WEEKLY_TRENDING;
 
-    console.log("URL is : ", url);
 
     const response = await axios.get(url,{
         headers:{
@@ -23,14 +22,9 @@ export default async function fetchWeeklyTrending(){
 
     const JsonData = response.data.result.data;
 
-    // console.log("Response is : ", JsonData);
-
-
-    const result = []
-
     const array = JsonData.data.map(item => {
         return {
-            productTitle: item.product_nickname,
+            productTitle: item.product_name,
             productImageUrl: item.product_thumbnail,
             productReleaseDate: item.releaseDate,
             productRank : item.current_rank,
@@ -39,11 +33,15 @@ export default async function fetchWeeklyTrending(){
         }
     });
 
-    await fs.writeFile(filePath, JSON.stringify(array,null,2), {encoding: 'utf-8'});
     
     for (let i = 0; i < array.length; i++) {
         let rankUpdate = array[i].productRank - array[i].prductLastWeekRank;
-        console.log("Rank update is : ", rankUpdate);
-        await sendWebhook(array[i].productTitle, array[i].productImageUrl, array[i].productReleaseDate, array[i].productRank, array[i].prductLastWeekRank);
+        if (rankUpdate < 0){
+            rankUpdate = `:arrow_down:  ${Math.abs(rankUpdate)}`;
+        } else{
+            rankUpdate = `:arrow_up:  ${Math.abs(rankUpdate)}`;
+        }
+        
+        await sendWebhook(array[i].productTitle, array[i].productImageUrl, array[i].productReleaseDate, array[i].productRank, rankUpdate);
     }
 }

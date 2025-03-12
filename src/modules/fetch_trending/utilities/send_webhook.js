@@ -7,20 +7,20 @@ import dotenv from 'dotenv';
 dotenv.config({ path: resolve('../../../../.env') });
 
 /**
- * @description  - This function sends messages to TinTang community.
+ * @description  - This function sends messages to 7tinh Hub community.
  * @param {*} headline : The headline of the story.
  * @param {*} imageURL : The image of story.
  * @param {*} postUrl  : The URL of the story.
  */
-export default async function sendWebhook(productTitle, productImageUrl, productReleaseDate, productRank, prductLastWeekRank) {
+export default async function sendWebhook(productTitle, productImageUrl, productReleaseDate, productRank, rankUpdate) {
   // The Discord webhook
-  const webhookUrl = process.env.NIKE_STOCK_DISCORD_WEBHOOK;
+  const webhookUrl = process.env.WEEKLY_TRENDING_DISCORD_WEBHOOK;
 
   try {
     // Create embed structure object message to send to Discord
 
     const embed = {
-      title: `${productTitle}`,
+      title: `${productTitle} - Ranking at ${productRank}`,
       color: 5763719,
       author: {
         name: '7tinh Hub Weekly Trending',
@@ -32,15 +32,15 @@ export default async function sendWebhook(productTitle, productImageUrl, product
       },
       fields: [
         {
-          name: `This Week Rank - ${productRank}`,
-          value: "",
-          inline: false,
-        },
-        {
-            name: `Last Week Rank - ${prductLastWeekRank}`,
-            value: "",
+            name: `Compare with last week - ${rankUpdate}`,
+            value : ``,
             inline: false,
         },
+        {
+            name: `Official Release Date : ${productReleaseDate}`,
+            value : ``,
+            inline: false
+        }
       ],
       footer: {
         text: 'powered by Casual Solutions',
@@ -82,7 +82,7 @@ export default async function sendWebhook(productTitle, productImageUrl, product
       const retryAfter = error.response.headers['retry-after'];
       console.log(`Rate limited! Retry after ${retryAfter} milliseconds.`);
       await delay(retryAfter); // Wait for the specified time before retrying
-      await sendWebhook(productTitle, productImageUrl, productReleaseDate, productRank, prductLastWeekRank) // Retry the webhook after waiting
+      await sendWebhook(productTitle, productImageUrl, productReleaseDate, productRank, rankUpdate) // Retry the webhook after waiting
     } else {
       // Log the error if it is not a rate limit error
       console.error('Error sending webhook:', error);

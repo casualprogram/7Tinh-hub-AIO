@@ -5,6 +5,7 @@ import askUser from './module_util/user_answer.js';
 import push_news from '../interfaces/push_news.js';
 import push_stock from '../interfaces/push_stock.js';
 import push_release_info from '../interfaces/push_release.js';
+import push_weekly_trending from '../interfaces/push_trending.js';
 
 
 /**
@@ -39,6 +40,10 @@ async function CLI_Interface() {
         case('3. Fetch Release Info'):
             console.log("RUNNING RELEASE MODULE");
             push_release_info();
+            break;
+        case('4. Fetch Weekly Trending'):
+            push_weekly_trending();
+            console.log("RUNNING TRENDING MODULE");
             break;
         case('Exit'):
             console.log(
