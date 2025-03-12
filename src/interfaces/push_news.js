@@ -1,7 +1,6 @@
 import getFirstData from "../modules/fetch_news/fetch/fetch_source_1.js";
 import getThirdData from "../modules/fetch_news/fetch/fetch_source3.js";
 
-import formattedData from "../modules/fetch_news/helper/formatting_data.js";
 import { resolve } from 'path';
 import path from 'path';
 import dotenv from 'dotenv';
@@ -32,5 +31,3 @@ export default async function push_news(){
     console.log("\n----------\n --> SEND TO THE COMMUNITY...\n----------");
     
 }
-
-push_news();
