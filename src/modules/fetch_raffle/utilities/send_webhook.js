@@ -14,7 +14,7 @@ dotenv.config({ path: resolve('../../../../.env') });
  */
 export default async function sendWebhook(productTitle, productPhoto, retailers) {
   // The Discord webhook
-  const webhookUrl = process.env.RELEASE_INFO_DISCORD;
+  const webhookUrl = process.env.NIKE_STOCK_DISCORD_WEBHOOK;
 
   try {
     // Generate retailer lines
@@ -22,7 +22,7 @@ export default async function sendWebhook(productTitle, productPhoto, retailers)
       .map(retailer => {
         const time = retailer.timeOfRelease.replace(/N\/A\s*/g, '').trim() || 'N/A';
         const type = retailer.releaseType.trim() || 'N/A';
-        return `------------------\n**${retailer.name}**  \n**Time** : ${time}  \n**Release Method** : ${type}\n------------------------------------`;
+        return `--------\n**${retailer.name}**  \n**Time** : ${time}  \n**Release Method** : ${type}\n--------`;
       })
       .filter(line => !line.includes('N/A - N/A')); // Exclude lines where both are N/A
 

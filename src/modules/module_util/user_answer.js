@@ -16,7 +16,8 @@ export default async function askUser(){
             '2. Fetch Stock',
             '3. Fetch Release Info',
             '4. Fetch Weekly Trending',
-            '5. New Modules Coming Soon',
+            '5. SNKRS Checkout Link',
+            '6. New Modules Coming Soon',
             'Exit'
         ],
         default() {
