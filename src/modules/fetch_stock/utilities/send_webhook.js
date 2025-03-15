@@ -83,8 +83,6 @@ export default async function sendWebhook(productTitle, productSKU, releaseMetho
       await delay(retryAfter); // Wait for the time specified in the `Retry-After` header
     }
 
-
-
     
   } catch (error) {
     // If the error is a 429 (rate limit exceeded) error
@@ -92,7 +90,7 @@ export default async function sendWebhook(productTitle, productSKU, releaseMetho
       const retryAfter = error.response.headers['retry-after'];
       console.log(`Rate limited! Retry after ${retryAfter} milliseconds.`);
       await delay(retryAfter); // Wait for the specified time before retrying
-      await sendWebhook(headline, imageURL, postUrl); // Retry the webhook after waiting
+      await sendWebhook(productTitle, productSKU, releaseMethod, sizeWithStockNumber, productPhoto); // Retry the webhook after waiting
     } else {
       // Log the error if it is not a rate limit error
       console.error('Error sending webhook:', error);

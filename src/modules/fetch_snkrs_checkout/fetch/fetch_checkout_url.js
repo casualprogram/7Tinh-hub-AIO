@@ -23,17 +23,6 @@ export default async function fetchCheckoutUrl(product_sku) {
       return { productInfo, links };
     });
 
-    // Collecting product photo
-    const dataNode = data.flatMap(item => item.publishedContent?.nodes || []);
-    let productPhoto = '';
-    for (const node of dataNode) {
-      const altText = node.properties?.altText || '';
-      if (altText.includes(product_sku)) {
-        productPhoto = node.properties?.portraitURL || 'No URL found'; 
-        break;
-      }
-    }
-
     // Filter out products that are not available
     let filteredProducts = [];
     try {
@@ -54,22 +43,22 @@ export default async function fetchCheckoutUrl(product_sku) {
       return;
     }
 
-    // Get the threadId, productTitle, releaseMethod, and productId
+    // Get the threadId, productTitle, and productId
     const threadId = filteredProducts.map(product => {
       const ref = product.links.self.ref;
       const match = ref.match(/\/threads\/v2\/([^?]+)/);
       return match ? match[1] : null;
     }).filter(Boolean); // Filter out any null values
 
+    // Gather the checkout url, product title, and product id
     const productTitle = filteredProducts.map(product => product.merchProduct.labelName);
-    const releaseMethod = filteredProducts.map(product => product.merchProduct.channels);
     const productId = filteredProducts.map(product => product.merchProduct.id);
-
     const SNKRS_URL = process.env.SNKRS_CHECKOUT_URL;
     const checkoutUrl = SNKRS_URL
       .replace('{productId}', productId)
       .replace('{threadId}', threadId);
 
+    // Send a webhook for each size
     const checkoutLinkWithSize = {};
     for (const product of filteredProducts) {
       for (const sku of product.skus) {
