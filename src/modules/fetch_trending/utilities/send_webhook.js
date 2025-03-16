@@ -20,7 +20,7 @@ export default async function sendWebhook(productTitle, productImageUrl, product
     // Create embed structure object message to send to Discord
 
     const embed = {
-      title: `${productTitle} - Ranking at ${productRank}`,
+      title: `Rank #${productRank} - ${productTitle}`,
       color: 5763719,
       author: {
         name: '7tinh Hub Weekly Trending',
