@@ -3,24 +3,39 @@
 <img width="543" alt="Screenshot 2025-02-23 at 10 19 53 PM" src="https://github.com/user-attachments/assets/b727687a-2ef9-4980-af14-5f53bd6259d0" />
 
 
-###Overview
+### Overview
 This bot is a Node.js-based web scraping tool designed to help 7Tinh Hub community keep up with fashion/sneaker hot news. While there are many excited plans coming up, it is still in early building process. Some of the features including delivery news and hot information, implementing AI to legit check item and more,...
 
 This project is ideal for developers interested in web scraping, automation, and integrating with Discord for real-time notifications.
 
+NOTICE : a lot of private request API and URL/Key has been hide for safety purpose. If you interested in learning more on each specific module and how it works. Feel free to send me a message on twitter :D !
 
 ## Features
-### Modules 1 - Fetch data
+### Modules 1 - Fetch news data
 Scrapes news articles (e.g., headlines, images, URLs) using Puppeteer.
 Filters news to include only items posted within 1–23 hours, excluding timestamps from the output.
 Saves scraped data to src/data/source1/stories.json for persistence or further processing.
 Supports potential integration with Discord for sending formatted news updates (configuration in progress).
 Uses ES Modules for modern JavaScript development with "type": "module" in package.json.
 
-### Modules 2 - Legit check with LLMs
-Coming soon...
+### Modules 2 - fetch release / raffle info
+Require an SKU for a specific shoe
+Scrapping sites that will release a specific shoes.
+Send msg to discord with all the information such as release time, release method.
 
+### Modules 3 - fetch  snkrs checkout URL
+Require an SKU for a specific shoe on SNKRS app
+Fetch early checkout link for SNKRS, support multiple entries (for future development)
+Send checkout url into Discord so member con be benefit
 
+### Modules 4 - fetch SNKRS stock
+Require an SKU for a specific shoe release soon on SNKRS app
+This will fetch the stock amount that loads in the backend of Nike.
+Give member an estimate of what size will be the most stock compare to others
+
+### Modules 4 - fetch weekly ranking / trending for sneakers.
+This will fetch the top 10 most popular / talks about sneaker in that week.
+Give member an update on which pair would be hype up upcoming weeks, which pair is die down from the hype
 
 ## Prerequisites
 Node.js: Version 18 or later (preferably arm64 for Apple Silicon Macs to optimize Puppeteer performance).
@@ -58,23 +73,36 @@ If it outputs x64, install an arm64 version of Node.js (see setup instructions i
 ## Project Structure
 
 ```
-/
-├── src/
-│   ├── modules/
-│   │   ├── fetch/
-│   │   │   └── source1.js        # Main scraping logic
-│   │   ├── helper/
-│   │   │   ├── delay.js          # Delay utility
-│   │   │   └── formatting_data.js # Data formatting (if applicable)
-│   ├── discord_msg/
-│   │   └── news_notify.js        # Discord integration (optional)
-│   └── data/
-│       └── source1/
-│           └── stories.json      # Scraped data storage (ignored by .gitignore)
-├── .env                          # Environment variables (ignored by .gitignore)
-├── .gitignore                    # Ignores sensitive/local files
-├── package.json                  # Project dependencies and scripts
-└── README.md                     # This file
+
+📦 7TinhHub-AIO
+├─ .gitignore
+├─ README.md
+├─ jest.config.js
+├─ jest.setup.js
+├─ jsconfig.json
+├─ package-lock.json
+├─ package.json
+└─ src
+   ├─ index.js
+   ├─ interfaces            // Store interfaces for each module
+   │  ├─ push_checkout_url.j
+   │  ├─ push_news.js
+   │  ├─ push_release.js
+   │  ├─ push_stock.js
+   │  └─ push_trending.js
+   └─ modules                // Each module logic, including fetch and send msg
+      ├─ CLI.js              // CLI config and end point to run.
+      ├─ fetch_new
+      ├─ fetch_raffle
+      ├─ fetch_snkrs_checkout
+      ├─ fetch_stock
+      ├─ fetch_trending
+      └─ module_util        // helper function for every module
+         ├─ auto_scroll.js
+         ├─ delay.js
+         ├─ read_line.js
+         └─ user_answer.js
+
 ```
 
 
