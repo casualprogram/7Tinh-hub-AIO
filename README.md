@@ -85,10 +85,10 @@ If it outputs x64, install an arm64 version of Node.js (see setup instructions i
 └─ src
    ├─ index.js
    ├─ interfaces            // Store interfaces for each module
-   │  ├─ push_checkout_url.j
-   │  ├─ push_news.js
-   │  ├─ push_release.js
-   │  ├─ push_stock.js
+   │  ├─ push_checkout_url
+   │  ├─ push_news
+   │  ├─ push_release
+   │  ├─ push_stock
    │  └─ push_trending.js
    └─ modules                // Each module logic, including fetch and send msg
       ├─ CLI.js              // CLI config and end point to run.
