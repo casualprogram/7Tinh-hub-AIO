@@ -161,6 +161,9 @@ class Monitor extends events{
         return this.monitorLoop();
     }
 
+    checkRestocks = async(product, oldProduct) =>{
+        
+    }
 
 
 
