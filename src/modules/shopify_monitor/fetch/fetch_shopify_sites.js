@@ -119,8 +119,11 @@ class Monitor extends events{
             let matchedProduct;
 
             // NOT SURE WHAT THIS DOING? LIKELY ITERATE THROUGH Product
+            // Iterate through prev product and check if it is already existed.
             this.previousProduct.forEach(product => {
+                // loop through previous and remove already existed product
                 matchedProductIndex = this.currentProducts.findIndex((_product) => _product.id = product.id);
+                // _currentProduct now only contain new product only
                 matchedProduct = this.currentProducts[matchedProductIndex];
 
                 if (matchedProduct && product.updated_at != matchedProduct.update_at){
@@ -128,15 +131,17 @@ class Monitor extends events{
                 }
             });
 
+            // FIND NEW PRODUCT THAT HAVENT FETCHED
             this.previousProducts.forEach(product => {
                 matchedProductIndex = _currentProducts.findIndex((_product) => _product.id == product.id);
                 matchedProduct = _currentProducts[matchedProductIndex];
                 
-                if (matchedProduct){
+            if (matchedProduct){
                     _currentProducts.splice(matchedProductIndex, 1);
                 }
             })
 
+            //// If there is a new product, we emits a newProduct
             if (_currentProducts.length){
                 _currentProducts.forEach((product) => {
                     let productDetails = {
@@ -144,10 +149,11 @@ class Monitor extends events{
                         product: product,
                         restockedVariants: product.variants
                     }
-
                     this.emit('newProduct', productDetails);
                 })
             }
+
+            // update previousProduct to current state for next loop cycle.
             this.previousProducts = [...this.currentProducts];
 
 
@@ -162,7 +168,26 @@ class Monitor extends events{
     }
 
     checkRestocks = async(product, oldProduct) =>{
-        
+        // fetch restockDetails with Object
+        let restockDetails = {
+            site: this.site,
+            product,
+            restockedVariants: []
+        }
+
+        // loop through product.variants, check if avail, find matching oldProduct.variants by id
+        product.variants.forEach((variant) => {
+            // if it wasnt available, add into the restockDetails
+            if (variant.available && !oldProduct.variants.find((_variant) => _variant.id == variant.id).available) {
+                restockDetails.restockedVariants.push(variant);
+                // @DEBUG: console.log(restockDetails.restockedVariants);
+            }
+        })
+
+        if (restockDetails.restockedVariants.length) {
+            // @DEBUG: console.log(restockDetails);
+            this.emit('restockedProduct', restockDetails);
+        }
     }
 
 
