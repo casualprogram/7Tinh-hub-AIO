@@ -48,7 +48,7 @@ export default async function getThirdData(){
         }
 
         // Write the data to the file system
-        // await fs.writeFile(filePath, JSON.stringify(jsonData, null, 2)), {encoding: "utf-8"};
+        await fs.writeFile(filePath, JSON.stringify(jsonData, null, 2)), {encoding: "utf-8"};
         
         
     } catch(e){

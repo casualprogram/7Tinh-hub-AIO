@@ -1,14 +1,17 @@
+export default function formatProxy(proxy) {
+    if (!proxy || proxy.replace(/\s/g, '') === "") return null;
 
-
-export default async function formatProxy(proxy){
-    if (!proxy || proxy.replace(/\s/g, '') == "")
-        return;
-
-    let proxySplit = proxy.split(":");
-
-    if (proxySplit.length > 2){
-        return 'http://' + proxySplit[2] + ':' + proxySplit[3] + '@' + proxySplit[0] + ':' + proxySplit[1];
+    const proxySplit = proxy.split(':');
+    if (proxySplit.length > 2) {
+        return {
+            host: proxySplit[0],
+            port: parseInt(proxySplit[1]),
+            auth: { username: proxySplit[2], password: proxySplit[3] }
+        };
     } else {
-        return 'http://' + proxySplit[0] + ':' + proxySplit[1];
+        return {
+            host: proxySplit[0],
+            port: parseInt(proxySplit[1])
+        };
     }
 }

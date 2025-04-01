@@ -1,199 +1,164 @@
-import dotenv from 'dotenv';
-import resolve from 'path';
-import request from 'request';
+import axios from 'axios';
+import { EventEmitter } from 'node:events';
+import { URL } from 'node:url';
 import sleep from '../utilities/sleep.js';
 import formatProxy from '../utilities/formatted_proxy.js';
 import getRandomArbitrary from '../utilities/getRandomArbitrary.js';
-import events from 'node:events';
 
+
+const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36';
 const safeHeaders = {
     'pragma': 'no-cache',
     'cache-control': 'no-cache',
     'upgrade-insecure-requests': '1',
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36',
+    'user-agent': userAgent,
     'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
     'sec-fetch-site': 'none',
     'sec-fetch-mode': 'navigate',
     'sec-fetch-user': '?1',
     'sec-fetch-dest': 'document',
     'accept-language': 'en-US,en;q=0.9'
-}
+};
 
-const request = async(url, option = {}) => {
-    const response = await fetch(url, {
-        ...flattenOptions,
-        headers:{
-            ...safeHeaders,
-            ...flattenOptions.headers,
-        },
+// Custom console timestamp (replacing console-stamp)
+const originalConsoleLog = console.log;
+console.log = (...args) => {
+    const timestamp = new Date().toLocaleTimeString('en-US', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        fractionalSecondDigits: 3
     });
-    return{
-        statusCode: response.status,
-        headers: response.headers,
-        body: await response.text()
-    };
+    originalConsoleLog(`[${timestamp}]`, ...args);
 };
 
 
-dotenv.config({ path: resolve('../../../../.env') });
+export default class Monitor extends EventEmitter{
+    constructor(props){
+        super();
 
+        Object.keys(props).forEach((key) => (this[key] = props[key]));
 
-class Monitor extends events{
+        this.previousProducts = [];
+        this.currentProducts = [];
 
-    constructor(props){  // props probs an  Objects
-        super(); // call constructor of parent class
+        this.site = new URL(this.site).origin;
 
-        // Objects.keys return an array of object's enumberable property names.
-        //                 forEach loop iterates over keys and assigning item = value
-        //                      If props = { site: 'https://shopify.com', name: 'MyMonitor' } 
-        //                                 this.site = 'https://shopify.com'
-        //                                 this.name = 'MyMonitor'
-        Object.keys(props).forEach((key) => this[key] = props[key]);
-
-        this.previousProduct = [];
-        this.currentProduct = []
-
-        // converting any sites into it original url. 
-        // From https://shopify.com/path/to/page to https://shopify.com
-        this.site = new URL(this.site).origin; 
-
-        setInterval(() => {
+        this.checkupInterval = setInterval(() => {
             console.log('60m Checkup: ' + this.site);
         }, 3600000);
 
         this.initMonitor();
     }
 
-    initMonitor = async () =>{
-        let response;
+    randomProxy = () => {
+        return formatProxy(this.proxies[Math.floor(Math.random() * this.proxies.length)]);
+    };
 
-        try{
-            response = await request.get({
-                url: this.site + '/products.json',
-                json: true,
-                followRedirect: true,
+    initMonitor = async () => {
+        try {
+            const response = await axios.get(`${this.site}`, {
+                headers: safeHeaders,
+                params: { limit: getRandomArbitrary(250, 9999) },
                 proxy: this.randomProxy(),
-                qs: {
-                    limit: getRandomArbitrary(250, 9999)
-                }
-            })
+                maxRedirects: 5, // Follow redirects (matches followRedirect: true)
+                responseType: 'json' // Parse JSON automatically
+            });
 
-            if (response.statusCode == 401){
+            if (response.status === 401) {
                 throw new Error('Password up on ' + this.site);
             }
 
-
-        } catch(e){
-            console.error(`INIT MONITOR ERR @ ${this.site}: ${initError.message}`);
-            console.log("PROXY WE USING CATCH ERRORS, ",  this.randomProxy());
-            await sleep(config.delay);
+            this.previousProducts = response.data.products;
+        } catch (initError) {
+            console.error(`INIT ERR @ ${this.site}: ${initError.message}`);
+            console.log("PROXY WE USING CATCH ERRORS, ", this.randomProxy());
+            await sleep(1000);
             return this.initMonitor();
         }
 
         this.monitorLoop(1);
-    }
+    };
 
-    monitorLoop = async() => {
-        let response;
-
+    monitorLoop = async () => {
         try {
-            response = await request.get({
-                url: this.site + '/products.json',
-                json: true,
-                followRedirect: true,
+            const response = await axios.get(`${this.site}`, {
+                headers: safeHeaders,
+                params: { limit: getRandomArbitrary(250, 9999) },
                 proxy: this.randomProxy(),
-                qs: {
-                    limit: getRandomArbitrary(250, 9999)
-                }
-            })
+                maxRedirects: 5,
+                responseType: 'json'
+            });
 
-            if (response.statusCode = 401){
+            if (response.status === 401) {
                 throw new Error('Password up on ' + this.site);
             }
 
+            this.currentProducts = response.data.products;
+            let _currentProducts = [...this.currentProducts];
 
-            this.currentProduct = response.body.products;
-            let _currentProducts = [...this.currentProduct];
+            let matchedProductIndex, matchedProduct;
 
-            let matchedProductIndex;
-            let matchedProduct;
-
-            // NOT SURE WHAT THIS DOING? LIKELY ITERATE THROUGH Product
-            // Iterate through prev product and check if it is already existed.
-            this.previousProduct.forEach(product => {
-                // loop through previous and remove already existed product
-                matchedProductIndex = this.currentProducts.findIndex((_product) => _product.id = product.id);
-                // _currentProduct now only contain new product only
+            this.previousProducts.forEach((product) => {
+                matchedProductIndex = this.currentProducts.findIndex((_product) => _product.id === product.id);
                 matchedProduct = this.currentProducts[matchedProductIndex];
-
-                if (matchedProduct && product.updated_at != matchedProduct.update_at){
+                if (matchedProduct && product.updated_at !== matchedProduct.updated_at) {
                     this.checkRestocks(this.currentProducts[matchedProductIndex], product);
                 }
             });
 
-            // FIND NEW PRODUCT THAT HAVENT FETCHED
-            this.previousProducts.forEach(product => {
-                matchedProductIndex = _currentProducts.findIndex((_product) => _product.id == product.id);
+            this.previousProducts.forEach((product) => {
+                matchedProductIndex = _currentProducts.findIndex((_product) => _product.id === product.id);
                 matchedProduct = _currentProducts[matchedProductIndex];
-                
-            if (matchedProduct){
-                    _currentProducts.splice(matchedProductIndex, 1);
-                }
-            })
+                if (matchedProduct) _currentProducts.splice(matchedProductIndex, 1);
+            });
 
-            //// If there is a new product, we emits a newProduct
-            if (_currentProducts.length){
+            if (_currentProducts.length) {
                 _currentProducts.forEach((product) => {
-                    let productDetails = {
+                    const productDetails = {
                         site: this.site,
-                        product: product,
+                        product,
                         restockedVariants: product.variants
-                    }
+                    };
                     this.emit('newProduct', productDetails);
-                })
+                });
             }
 
-            // update previousProduct to current state for next loop cycle.
             this.previousProducts = [...this.currentProducts];
-
-
-        } catch(e){
+        } catch (monitorError) {
             console.error(`MON ERR @ ${this.site}: ${monitorError.message}`);
-            await sleep(config.delay);
+            await sleep(1000);
             return this.monitorLoop();
         }
 
-        await sleep('10000');
+        await sleep(1000);
         return this.monitorLoop();
-    }
+    };
 
-    checkRestocks = async(product, oldProduct) =>{
-        // fetch restockDetails with Object
-        let restockDetails = {
+
+    checkRestocks = async (product, oldProduct) => {
+        const restockDetails = {
             site: this.site,
             product,
             restockedVariants: []
-        }
+        };
 
-        // loop through product.variants, check if avail, find matching oldProduct.variants by id
         product.variants.forEach((variant) => {
-            // if it wasnt available, add into the restockDetails
-            if (variant.available && !oldProduct.variants.find((_variant) => _variant.id == variant.id).available) {
+            if (variant.available && !oldProduct.variants.find((_variant) => _variant.id === variant.id).available) {
                 restockDetails.restockedVariants.push(variant);
-                // @DEBUG: console.log(restockDetails.restockedVariants);
             }
-        })
+        });
 
         if (restockDetails.restockedVariants.length) {
-            // @DEBUG: console.log(restockDetails);
             this.emit('restockedProduct', restockDetails);
         }
-    }
+    };
 
+    destroy = () => {
+        clearInterval(this.checkupInterval);
+    };
 
 
 }
 
-// export default async function shopify_monitor_fetch(){
-
-// }
