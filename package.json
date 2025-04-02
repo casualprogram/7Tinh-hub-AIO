@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --verbose"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --verbose",
+    "start": "node src/modules/CLI.js"
   },
   "repository": {
     "type": "git",

@@ -7,6 +7,7 @@ import push_stock from '../interfaces/push_stock.js';
 import push_release_info from '../interfaces/push_release.js';
 import push_weekly_trending from '../interfaces/push_trending.js';
 import push_checkout_url from '../interfaces/push_checkout_url.js';
+import push_shopify_monitor from '../interfaces/push_shopify_monitor.js';
 
 
 /**
@@ -49,6 +50,10 @@ async function CLI_Interface() {
         case('5. SNKRS Checkout Link'):
             console.log("RUNNING SNKRS CHECKOUT MODULE");
             push_checkout_url();
+            break;
+        case('6. Shopify Monitor'):
+            console.log("RUNNING SHOPIFY MONITOR MODULE");
+            push_shopify_monitor();
             break;
         case('Exit'):
             console.log(

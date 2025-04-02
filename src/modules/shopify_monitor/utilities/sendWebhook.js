@@ -1,18 +1,23 @@
 import axios from 'axios';
-import { resolve } from 'node:path';
 import dotenv from 'dotenv';
-import sleep from './sleep.js'; // Import sleep
+import sleep from './sleep.js'; 
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-dotenv.config({ path: resolve('../../../../.env') });
+const __dirname = dirname(fileURLToPath(import.meta.url)); // Get current directory
+
+// Resolve the path to your .env file
+const envPath = resolve(__dirname, '../../../../.env'); 
+
+dotenv.config({ path: envPath });
 
 export default async function sendWebhook(color, title, productDetails) {
-    const shopifyWebhook = process.env.SHOPIFY_DISCORD_WEBHOOK;
-    console.log("SHOPIFY WEBHOOK AT ", shopifyWebhook);
+    const discordWebHook = process.env.SHOPIFY_DISCORD_WEBHOOK;
 
     try {
         const embed = {
             embeds: [{
-                author: { // Fixed 'authors' to 'author'
+                author: { 
                     name: `${title} @ ${productDetails.site}`,
                     url: productDetails.site
                 },
@@ -23,8 +28,8 @@ export default async function sendWebhook(color, title, productDetails) {
                     url: productDetails.product.images[0]?.src || 'https://imgur.com/NO25iZV'
                 },
                 footer: {
-                    icon_url: "https://www.citypng.com/public/uploads/preview/shopify-bag-icon-symbol-logo-701751695132537nenecmhs0u.png",
-                    text: "Powered by Casual Solutions" // Fixed typo
+                    icon_url: "https://pbs.twimg.com/profile_images/1398475007584444418/GRPcs63v_400x400.jpg",
+                    text: "Powered by Casual Solutions" 
                 },
                 type: "rich",
                 fields: productDetails.restockedVariants.map((variant) => ({
@@ -32,7 +37,7 @@ export default async function sendWebhook(color, title, productDetails) {
                         ? `${variant.title}: ${variant.inventory_quantity || 'In'} Stock` 
                         : `${variant.title}: OOS`,
                     value: variant.available 
-                        ? `[Checkout URL](${productDetails.site}/cart/${variant.id}:1)` 
+                        ? `[ATC](${productDetails.site}/cart/${variant.id}:1)` 
                         : `${variant.id}`,
                     inline: true
                 })),
@@ -40,21 +45,11 @@ export default async function sendWebhook(color, title, productDetails) {
             }]
         };
 
-        const response = await axios.post(shopifyWebhook, embed, {
+        const response = await axios.post(discordWebHook, embed, {
             headers: { 'Content-Type': 'application/json' }
         });
 
-        // Log rate limit info
-        const remainingRequests = response.headers['x-ratelimit-remaining'];
-        const resetTime = response.headers['x-ratelimit-reset'];
-        console.log(`Rate limit remaining: ${remainingRequests}, resets at: ${new Date(resetTime * 1000)}`);
 
-        if (remainingRequests === '0') {
-            const retryAfter = response.headers['retry-after'] * 1000; // Convert to ms
-            console.log(`Rate limited! Retrying after ${retryAfter} ms`);
-            await sleep(retryAfter);
-            await sendWebhook(color, title, productDetails); // Retry
-        }
     } catch (error) {
         if (error.response?.status === 429) {
             const retryAfter = error.response.headers['retry-after'] * 1000; // Convert to ms

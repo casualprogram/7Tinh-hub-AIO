@@ -1,10 +1,21 @@
 import axios from 'axios';
 import { EventEmitter } from 'node:events';
 import { URL } from 'node:url';
-import sleep from '../utilities/sleep.js';
-import formatProxy from '../utilities/formatted_proxy.js';
-import getRandomArbitrary from '../utilities/getRandomArbitrary.js';
+import sleep from '../../utilities/sleep.js';
+import formatProxy from '../../utilities/formatted_proxy.js';
+import getRandomArbitrary from '../../utilities/getRandomArbitrary.js';
+import logWithTimestamp from '../../../module_util/log_with_timestamp.js'
+import dotenv from 'dotenv';
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
+
+const __dirname = dirname(fileURLToPath(import.meta.url)); // Get current directory
+
+// Resolve the path to your .env file
+const envPath = resolve(__dirname, '../../../../../.env'); 
+
+dotenv.config({ path: envPath });
 
 const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36';
 const safeHeaders = {
@@ -20,21 +31,8 @@ const safeHeaders = {
     'accept-language': 'en-US,en;q=0.9'
 };
 
-// Custom console timestamp (replacing console-stamp)
-const originalConsoleLog = console.log;
-console.log = (...args) => {
-    const timestamp = new Date().toLocaleTimeString('en-US', {
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        fractionalSecondDigits: 3
-    });
-    originalConsoleLog(`[${timestamp}]`, ...args);
-};
-
-
 export default class Monitor extends EventEmitter{
+    
     constructor(props){
         super();
 
@@ -46,7 +44,7 @@ export default class Monitor extends EventEmitter{
         this.site = new URL(this.site).origin;
 
         this.checkupInterval = setInterval(() => {
-            console.log('60m Checkup: ' + this.site);
+            logWithTimestamp('60m Checkup: ' + this.site);
         }, 3600000);
 
         this.initMonitor();
@@ -58,7 +56,8 @@ export default class Monitor extends EventEmitter{
 
     initMonitor = async () => {
         try {
-            const response = await axios.get(`${this.site}`, {
+            logWithTimestamp(`\t\tMonitoring ${this.site}`);
+            const response = await axios.get(`${this.site}${process.env.SHOPIFY_END_POINT}`, {
                 headers: safeHeaders,
                 params: { limit: getRandomArbitrary(250, 9999) },
                 proxy: this.randomProxy(),
@@ -73,7 +72,7 @@ export default class Monitor extends EventEmitter{
             this.previousProducts = response.data.products;
         } catch (initError) {
             console.error(`INIT ERR @ ${this.site}: ${initError.message}`);
-            console.log("PROXY WE USING CATCH ERRORS, ", this.randomProxy());
+            logWithTimestamp("PROXY WE USING CATCH ERRORS, ", this.randomProxy());
             await sleep(1000);
             return this.initMonitor();
         }
@@ -83,7 +82,7 @@ export default class Monitor extends EventEmitter{
 
     monitorLoop = async () => {
         try {
-            const response = await axios.get(`${this.site}`, {
+            const response = await axios.get(`${this.site}${process.env.SHOPIFY_END_POINT}`, {
                 headers: safeHeaders,
                 params: { limit: getRandomArbitrary(250, 9999) },
                 proxy: this.randomProxy(),
@@ -161,4 +160,3 @@ export default class Monitor extends EventEmitter{
 
 
 }
-
