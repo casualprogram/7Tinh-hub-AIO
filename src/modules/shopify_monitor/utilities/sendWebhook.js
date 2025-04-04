@@ -38,7 +38,7 @@ export default async function sendWebhook(color, title, productDetails) {
                         : `${variant.title}: OOS`,
                     value: variant.available 
                         ? `[ATC](${productDetails.site}/cart/${variant.id}:1)` 
-                        : `${variant.id}`,
+                        : ``,
                     inline: true
                 })),
                 timestamp: new Date().toISOString()

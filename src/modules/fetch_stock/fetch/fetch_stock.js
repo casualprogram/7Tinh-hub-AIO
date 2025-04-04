@@ -55,9 +55,6 @@ export default async function fetchStock(product_sku) {
       return; 
     }
 
-    const filePath = path.resolve('../../src/data/source1/snkrs.json');
-    await fs.writeFile(filePath, JSON.stringify(filteredProducts, null, 2), { encoding: 'utf-8' });
-
     // Collecting data
     const productTitle = filteredProducts.map(product => product.merchProduct.labelName);
     const productSKU = filteredProducts.map(product => product.merchProduct.styleCode);

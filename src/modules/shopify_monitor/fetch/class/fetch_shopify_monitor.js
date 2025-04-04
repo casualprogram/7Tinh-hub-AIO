@@ -126,7 +126,7 @@ export default class Monitor extends EventEmitter{
 
             this.previousProducts = [...this.currentProducts];
         } catch (monitorError) {
-            console.error(`MON ERR @ ${this.site}: ${monitorError.message}`);
+            console.error(`MONITOR ERR @ ${this.site}: ${monitorError.message}`);
             await sleep(1000);
             return this.monitorLoop();
         }
