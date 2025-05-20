@@ -51,10 +51,6 @@ export default class Monitor extends EventEmitter {
   }
 
   randomProxy = () => {
-    console.log(
-      "proxies",
-      formatProxy(this.proxies[Math.floor(Math.random() * this.proxies.length)])
-    );
     return formatProxy(
       this.proxies[Math.floor(Math.random() * this.proxies.length)]
     );
@@ -68,10 +64,7 @@ export default class Monitor extends EventEmitter {
         {
           headers: safeHeaders,
           params: { limit: getRandomArbitrary(250, 9999) },
-
-          // THIS IS THE ISSUE
-          // proxy: this.randomProxy(),
-          //-------------------
+          proxy: this.randomProxy(),
           maxRedirects: 5, // Follow redirects (matches followRedirect: true)
           responseType: "json", // Parse JSON automatically
         }
@@ -99,16 +92,12 @@ export default class Monitor extends EventEmitter {
         {
           headers: safeHeaders,
           params: { limit: getRandomArbitrary(250, 9999) },
-
-          // THIS IS THE ISSUE
-          // proxy: this.randomProxy(),
-          //-------------------
+          proxy: this.randomProxy(),
           maxRedirects: 5,
           responseType: "json",
         }
       );
 
-      console.log("we running monitor loop");
       if (response.status === 401) {
         throw new Error("Password up on " + this.site);
       }
