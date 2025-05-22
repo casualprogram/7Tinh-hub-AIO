@@ -9,7 +9,6 @@ dotenv.config({ path: resolve("../../../../.env") });
 
 async function fetchATC(product_URL) {
   try {
-    console.log("Attemping fastMode...");
     await fastMode(product_URL);
     console.log("Fast mode completed successfully.");
     return true;
