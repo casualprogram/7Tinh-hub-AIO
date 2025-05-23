@@ -22,7 +22,13 @@ const safeHeaders = {
   "sec-fetch-dest": "document",
 };
 
+/**
+ * @description normalMode - Fetches product information and generates ATC links for each variant when AntiBot is enabled.
+ * @param {} productUrl - The URL of the product page.
+ */
+
 export default async function normalMode(productUrl) {
+  // Gathering and building url
   let browser;
   const atcEndPoint = process.env.ATC_PRODUCT_END_POINT;
 
@@ -34,8 +40,7 @@ export default async function normalMode(productUrl) {
     }
     const productJsonUrl = `${baseUrl}/products/${productHandle}${atcEndPoint}`;
 
-    console.log("FINAL URL:", productJsonUrl);
-    console.log("Trying normalMode");
+    console.log("\tTrying normalMode");
 
     browser = await puppeteer.launch({
       headless: true,
@@ -58,7 +63,10 @@ export default async function normalMode(productUrl) {
       timeout: 60000, // Increase timeout to 60s
     });
 
+    // Wait for the JSON data to load
     const content = await page.content();
+
+    // processing product data
     const jsonMatch = content.match(/<pre[^>]*>(.*?)<\/pre>/s);
     if (!jsonMatch || !jsonMatch[1]) {
       throw new Error("No JSON data found on the page");
@@ -85,15 +93,11 @@ export default async function normalMode(productUrl) {
     const imgUrl = product.images[0]?.src || "";
     const productTitle = product.title || "Unknown Product";
 
-    console.log("normalMode succeeded! ATC Links:", atcLinks);
-    console.log("Image URL:", imgUrl);
-    console.log("DONE");
-
+    // Sending webhook msg
     await sendWebhook(atcLinks, imgUrl, productTitle);
   } catch (error) {
     console.error("Error in normalMode:", {
       message: error.message,
-      stack: error.stack,
     });
     throw error;
   } finally {

@@ -5,7 +5,7 @@ export default async function getBaseUrl(product_URL) {
     //      https: + // + website.com
     return `${parsedUrl.protocol}//${parsedUrl.hostname}`;
   } catch (error) {
-    console.error("Invalid product URL provided ", error);
+    console.error("Invalid product URL provided ");
     return null;
   }
 }

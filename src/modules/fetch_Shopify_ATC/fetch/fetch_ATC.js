@@ -1,38 +1,32 @@
-import dotenv from "dotenv";
-import { resolve, dirname } from "path";
-import { fileURLToPath } from "url";
 import fastMode from "../utilities/fast_mode.js"; // Import your fastMode function
 import normalMode from "../utilities/normal_mode.js";
 
-// Resolve the path to your .env file
-dotenv.config({ path: resolve("../../../../.env") });
-
-async function fetchATC(product_URL) {
+/**
+ * fetchATC - Act as an interface for the ATC fetch process.
+ * @param {*} product_URL - The URL of the product to fetch
+ * @returns {Promise<boolean>} - Returns true if the fetch was successful, false otherwise.
+ */
+export default async function fetchATC(product_URL) {
+  // try fast mode first
   try {
     await fastMode(product_URL);
-    console.log("Fast mode completed successfully.");
-    return true;
   } catch (error) {
+    // if antibot is up, we switch to normal mode
     if (error.response && error.response.status === 403) {
       console.log(
-        "403 CloudFare Anti-bot is up -> Fast Mode failed, trying Normal Mode..."
+        "\t 403 CloudFare Anti-bot is up -> Fast Mode failed, trying Normal Mode..."
       );
       try {
+        // run normal mode as backup Plan B
         await normalMode(product_URL);
-        console.log("Normal mode completed successfully.");
-        return true;
       } catch (error) {
         console.error("Normal mode failed: ", error.message);
-        return false;
       }
     } else {
       console.error(
         "Fast Mode failed for non-Cloudflare reason : ",
         error.message
       );
-      return false;
     }
   }
 }
-
-fetchATC(product);

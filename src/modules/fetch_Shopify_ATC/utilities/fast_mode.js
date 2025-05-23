@@ -2,11 +2,8 @@ import { resolve, dirname } from "path";
 import axios from "axios";
 import getBaseUrl from "./getBaseUrl.js";
 import getProductHandle from "./get_product_handle.js";
-import fs from "fs/promises";
 import sendWebhook from "./send_webhook.js";
 import dotenv from "dotenv";
-import isProductUrl from "./is_product_url.js";
-import productURL from "./product_URL.js";
 
 dotenv.config({ path: resolve("../../../../.env") });
 
@@ -26,24 +23,26 @@ const safeHeaders = {
   "accept-language": "en-US,en;q=0.9",
 };
 
+/**
+ * @description fastMode - Fetches product information and generates ATC links for each variant when AntiBot is not enabled.
+ * @param {*} product_URL - The URL of the product page.
+ * @returns
+ */
 export default async function fastMode(product_URL) {
   try {
+    // Gathering and building url
     const atcEndPoint = process.env.ATC_PRODUCT_END_POINT;
-
     const baseURLL = await getBaseUrl(product_URL);
-    console.log("Base URL: ", baseURLL);
     const handle = await getProductHandle(product_URL);
-    console.log("Product Handle: ", handle);
-
     const productJsonUrl = `${baseURLL}/products/${handle}${atcEndPoint}`;
 
-    console.log("Product JSON URL: ", productJsonUrl);
-
+    // Fetching product data
     const response = await axios.get(productJsonUrl, {
       headers: safeHeaders,
       responseType: "json",
     });
 
+    // processing product data
     const product = response.data.product;
 
     if (!product || !product.variants) {
@@ -60,16 +59,12 @@ export default async function fastMode(product_URL) {
     const imgUrl = product.image.src;
     const productTitle = product.title;
 
-    console.log("imgUrl - ", imgUrl);
-
     console.log("fast Mode succeed !");
-    console.log("ATC Links: ", atcLinks);
 
+    // Sending webhook
     await sendWebhook(atcLinks, imgUrl, productTitle);
-
-    console.log("Webhook sent successfully!");
   } catch (error) {
-    console.error("Error in fastMode:");
+    console.error("\t Error in fastMode");
     throw error;
   }
 }

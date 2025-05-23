@@ -17,21 +17,17 @@ export default async function sendWebhook(
 ) {
   const webhookUrl = process.env.SHOPIFY_ATC_DISCORD_WEBHOOK;
 
-  console.log("webhookUrl: ", webhookUrl);
-
   try {
     // Format ATC links into a Discord-friendly string
-
     const onePrice = atcLinks[0].price;
     const sizeString = atcLinks
-      .map(({ size, atcLink, price }) => `[${size}](${atcLink})`)
+      .map(({ size, atcLink }) => `[${size}](${atcLink})`)
       .join("\n");
     const formattedSizeString = `\n${sizeString}\n`; // Wrap in a code block
 
     const embed = {
       title: productTitle,
-      type: "rich",
-      description: `$${onePrice} USD`,
+      description: `$${onePrice}`,
       color: 5763719,
       author: {
         name: "7tinh Hub",
@@ -68,7 +64,6 @@ export default async function sendWebhook(
 
     const remainingRequests = response.headers["x-ratelimit-remaining"];
     const resetTime = response.headers["x-ratelimit-reset"];
-    console.log(`Rate limit resets at: ${new Date(resetTime * 1000)}`);
 
     if (remainingRequests === "0") {
       const retryAfter = response.headers["retry-after"];
