@@ -4,6 +4,9 @@ import getBaseUrl from "./getBaseUrl.js";
 import getProductHandle from "./get_product_handle.js";
 import sendWebhook from "./send_webhook.js";
 import dotenv from "dotenv";
+import isProductUrl from "./is_product_url.js";
+import fs from "fs/promises";
+import path from "path";
 
 dotenv.config({ path: resolve("../../../../.env") });
 
@@ -31,38 +34,84 @@ const safeHeaders = {
 export default async function fastMode(product_URL) {
   try {
     // Gathering and building url
-    const atcEndPoint = process.env.ATC_PRODUCT_END_POINT;
-    const baseURLL = await getBaseUrl(product_URL);
-    const handle = await getProductHandle(product_URL);
-    const productJsonUrl = `${baseURLL}/products/${handle}${atcEndPoint}`;
 
-    // Fetching product data
-    const response = await axios.get(productJsonUrl, {
-      headers: safeHeaders,
-      responseType: "json",
-    });
+    const baseURL = await getBaseUrl(product_URL);
+    const isProductPage = isProductUrl(product_URL);
 
-    // processing product data
-    const product = response.data.product;
+    if (!isProductPage) {
+      const atcEndPoint = process.env.ATC_PRODUCT_END_POINT;
+      console.log("Product url detected !");
+      const handle = await getProductHandle(product_URL);
+      const productJsonUrl = `${baseURL}/products/${handle}${atcEndPoint}`;
 
-    if (!product || !product.variants) {
-      console.error("no product founded");
-      return;
+      // Fetching product data
+      const response = await axios.get(productJsonUrl, {
+        headers: safeHeaders,
+        responseType: "json",
+      });
+
+      // processing product data
+      const product = response.data.product;
+
+      if (!product || !product.variants) {
+        console.error("no product founded");
+        return;
+      }
+
+      const atcLinks = product.variants.map((variant) => ({
+        size: variant.title,
+        atcLink: `${baseURL}/cart/${variant.id}:1`,
+        price: variant.price,
+      }));
+
+      const imgUrl = product.image.src;
+      const productTitle = product.title;
+
+      console.log("fast Mode succeed !");
+
+      // Sending webhook
+      await sendWebhook(atcLinks, imgUrl, productTitle);
+    } else {
+      console.log("Main page url detected !");
+      const atcMainPageEndPoint = process.env.ATC_MAIN_PAGE_END_POINT;
+      const productJsonUrl = `${baseURL}/${atcMainPageEndPoint}`;
+
+      console.log("productJsonUrl : ", productJsonUrl);
+
+      // Fetching product data
+      const response = await axios.get(productJsonUrl, {
+        headers: safeHeaders,
+        responseType: "json",
+      });
+
+      // processing product data
+
+      const products = response.data.products;
+
+      console.log("product : ", products);
+
+      console.log("File written successfully to ", filePath);
+
+      for (const product of products) {
+        try {
+          console.log("product : ", product);
+          const atcLinks = product.variants
+            .filter((variant) => variant.available)
+            .map((variant) => ({
+              size: variant.title,
+              atcLink: `${baseURL}/cart/${variant.id}:1`,
+              price: variant.price,
+            }));
+
+          const imgUrl = product.images[0]?.src || "";
+          const productTitle = product.title;
+
+          await sendWebhook(atcLinks, imgUrl, productTitle);
+        } catch (error) {
+          console.error("Error processing products variants: ", error);
+        }
+      }
     }
-
-    const atcLinks = product.variants.map((variant) => ({
-      size: variant.title,
-      atcLink: `${baseURLL}/cart/${variant.id}:1`,
-      price: variant.price,
-    }));
-
-    const imgUrl = product.image.src;
-    const productTitle = product.title;
-
-    console.log("fast Mode succeed !");
-
-    // Sending webhook
-    await sendWebhook(atcLinks, imgUrl, productTitle);
   } catch (error) {
     console.error("\t Error in fastMode");
     throw error;
