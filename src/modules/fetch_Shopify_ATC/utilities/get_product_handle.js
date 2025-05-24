@@ -7,13 +7,8 @@ export default async function getProductHandle(product_URL) {
   try {
     const parsedUrl = new URL(product_URL);
 
-    console.log("parsedUrl : ", parsedUrl);
     // Split the pathname to isolate the product handle
     const pathParts = parsedUrl.pathname.split("/products/");
-
-    console.log("pathParts : ", pathParts);
-
-    console.log("pathParts.length : ", pathParts.length);
 
     // Check if the URL contains the product handle
     if (pathParts.length < 2) {

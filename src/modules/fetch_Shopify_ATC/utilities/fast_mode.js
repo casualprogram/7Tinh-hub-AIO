@@ -38,78 +38,38 @@ export default async function fastMode(product_URL) {
     const baseURL = await getBaseUrl(product_URL);
     const isProductPage = isProductUrl(product_URL);
 
-    if (!isProductPage) {
-      const atcEndPoint = process.env.ATC_PRODUCT_END_POINT;
-      console.log("Product url detected !");
-      const handle = await getProductHandle(product_URL);
-      const productJsonUrl = `${baseURL}/products/${handle}${atcEndPoint}`;
+    const atcEndPoint = process.env.ATC_PRODUCT_END_POINT;
+    console.log("Product url detected !");
+    const handle = await getProductHandle(product_URL);
+    const singleProductJsonUrl = `${baseURL}/products/${handle}${atcEndPoint}`;
 
-      // Fetching product data
-      const response = await axios.get(productJsonUrl, {
-        headers: safeHeaders,
-        responseType: "json",
-      });
+    // Fetching product data
+    const response = await axios.get(singleProductJsonUrl, {
+      headers: safeHeaders,
+      responseType: "json",
+    });
 
-      // processing product data
-      const product = response.data.product;
+    // processing product data
+    const product = response.data.product;
 
-      if (!product || !product.variants) {
-        console.error("no product founded");
-        return;
-      }
-
-      const atcLinks = product.variants.map((variant) => ({
-        size: variant.title,
-        atcLink: `${baseURL}/cart/${variant.id}:1`,
-        price: variant.price,
-      }));
-
-      const imgUrl = product.image.src;
-      const productTitle = product.title;
-
-      console.log("fast Mode succeed !");
-
-      // Sending webhook
-      await sendWebhook(atcLinks, imgUrl, productTitle);
-    } else {
-      console.log("Main page url detected !");
-      const atcMainPageEndPoint = process.env.ATC_MAIN_PAGE_END_POINT;
-      const productJsonUrl = `${baseURL}/${atcMainPageEndPoint}`;
-
-      console.log("productJsonUrl : ", productJsonUrl);
-
-      // Fetching product data
-      const response = await axios.get(productJsonUrl, {
-        headers: safeHeaders,
-        responseType: "json",
-      });
-
-      // processing product data
-
-      const products = response.data.products;
-
-      console.log("product : ", products);
-
-      for (const product of products) {
-        try {
-          console.log("product : ", product);
-          const atcLinks = product.variants
-            .filter((variant) => variant.available)
-            .map((variant) => ({
-              size: variant.title,
-              atcLink: `${baseURL}/cart/${variant.id}:1`,
-              price: variant.price,
-            }));
-
-          const imgUrl = product.images[0]?.src || "";
-          const productTitle = product.title;
-
-          await sendWebhook(atcLinks, imgUrl, productTitle);
-        } catch (error) {
-          console.error("Error processing products variants: ", error);
-        }
-      }
+    if (!product || !product.variants) {
+      console.error("no product founded");
+      return;
     }
+
+    const atcLinks = product.variants.map((variant) => ({
+      size: variant.title,
+      atcLink: `${baseURL}/cart/${variant.id}:1`,
+      price: variant.price,
+    }));
+
+    const imgUrl = product.image.src;
+    const productTitle = product.title;
+
+    console.log("fast Mode succeed !");
+
+    // Sending webhook
+    await sendWebhook(atcLinks, imgUrl, productTitle);
   } catch (error) {
     console.error("\t Error in fastMode");
     throw error;
