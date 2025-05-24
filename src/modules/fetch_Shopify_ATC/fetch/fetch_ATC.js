@@ -1,5 +1,5 @@
-import fastMode from "../utilities/fast_mode_product.js"; // Import your fastMode function
-import normalMode from "../utilities/normal_mode_product.js";
+import fastMode from "../utilities/fast_mode.js"; // Import your fastMode function
+import normalMode from "../utilities/normal_mode.js";
 
 /**
  * fetchATC - Act as an interface for the ATC fetch process.
