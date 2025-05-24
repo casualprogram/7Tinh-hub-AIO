@@ -90,8 +90,6 @@ export default async function fastMode(product_URL) {
 
       console.log("product : ", products);
 
-      console.log("File written successfully to ", filePath);
-
       for (const product of products) {
         try {
           console.log("product : ", product);
