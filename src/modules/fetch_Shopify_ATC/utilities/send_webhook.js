@@ -19,7 +19,13 @@ export default async function sendWebhook(
 
   try {
     // Format ATC links into a Discord-friendly string
-    const onePrice = atcLinks[0].price;
+    const onePrice =
+      atcLinks[0]?.price != null
+        ? atcLinks[0].price
+        : atcLinks[1]?.price != null
+        ? atcLinks[1].price
+        : null;
+
     const sizeString = atcLinks
       .map(({ size, atcLink }) => `[${size}](${atcLink})`)
       .join("\n");
@@ -27,7 +33,7 @@ export default async function sendWebhook(
 
     const embed = {
       title: productTitle,
-      description: `$${onePrice}`,
+      description: `$${onePrice}` || "No price available",
       color: 5763719,
       author: {
         name: "7tinh Hub",
@@ -63,7 +69,6 @@ export default async function sendWebhook(
     });
 
     const remainingRequests = response.headers["x-ratelimit-remaining"];
-    const resetTime = response.headers["x-ratelimit-reset"];
 
     if (remainingRequests === "0") {
       const retryAfter = response.headers["retry-after"];
@@ -75,19 +80,11 @@ export default async function sendWebhook(
       const retryAfter = error.response.headers["retry-after"];
       console.log(`Rate limited! Retrying after ${retryAfter} milliseconds.`);
       await delay(retryAfter);
-      await sendWebhook(
-        productTitle,
-        productSKU,
-        releaseMethod,
-        atcLinks,
-        productPhoto
-      );
+      await sendWebhook(atcLinks, productPhoto, productTitle);
     } else {
       console.error("Error sending webhook:", error.message);
       if (error.response) {
-        console.error("Response data:", error.response.data);
         console.error("Response status:", error.response.status);
-        console.error("Response headers:", error.response.headers);
       }
     }
   }
