@@ -100,9 +100,7 @@ node -p "process.arch"
 
 If it outputs x64, install an arm64 version of Node.js (see setup instructions in the project issues or documentation) to optimize Puppeteer performance and avoid Rosetta translation warnings
 
-**Verify Node.js architecture (for Apple Silicon Macs)**
-
-> Run the bot with
+**> Run the bot with**
 
 ```
 npm start
