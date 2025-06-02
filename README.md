@@ -8,7 +8,13 @@ This bot is a Node.js-based web scraping tool designed to help 7Tinh Hub communi
 
 This project is ideal for developers interested in web scraping, automation, and integrating with Discord for real-time notifications.
 
-NOTICE : a lot of private request API and URL/Key has been hide for safety purpose. If you interested in learning more on each specific module and how it works. Feel free to send me a message on twitter :D !
+Updates :
+
+- 03/23
+  > a lot of private request API and URL/Key has been hide for safety purpose. If you interested in learning more on each specific module and how it works. Feel free to send me a message on twitter.
+- 05/24
+  > After the shopify checkout URL (module 7), I will stop push updates for this repo. After 2 months and great amount of updates, 7Tin has became a real community that I am so proud of!.
+  > From now on, I will shift my focus into 7Tin AIO V2, which extends the ideas of have the user with more control over the bot, perhaps run the module that benefit them. There are so many excting anti-bot solutions that I can wait to test it out and give my community a huge advantages over regular user. Unfortunately, this V2 will be a private repo until I think it is ready to be share with the devs community :D !
 
 ## Features
 
