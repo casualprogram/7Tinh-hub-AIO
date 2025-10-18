@@ -34,7 +34,7 @@ export default async function fetchRaffle(SKU) {
     const productTitle = titleElement.text().trim() || "N/A";
 
     // Extract Image
-    const image = $("div.slider-img-cnt-blk img").attr("src") || "N/A";
+    const image = $("img.d-block.loaded").attr("src") || "N/A";
 
     const retailers = [];
 
