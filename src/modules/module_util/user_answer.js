@@ -17,6 +17,7 @@ export default async function askUser() {
       "5. SNKRS Checkout Link",
       "6. Shopify Monitor",
       "7. Shopify Checkout Link",
+      "8. Travis Scott Raffle Status",
       "Exit",
     ],
     default() {

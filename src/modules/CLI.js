@@ -8,6 +8,7 @@ import push_weekly_trending from "../interfaces/push_trending.js";
 import push_checkout_url from "../interfaces/push_checkout_url.js";
 import push_shopify_monitor from "../interfaces/push_shopify_monitor.js";
 import push_ATC from "../interfaces/push_ATC.js";
+import push_trav_status from "../interfaces/push_Trav.js";
 
 /**
  * @description - This function is the CLI interface.
@@ -58,6 +59,10 @@ async function CLI_Interface() {
     case "7. Shopify Checkout Link":
       console.log("RUNNING SHOPIFY CHECKOUT LINK MODULE");
       push_ATC();
+      break;
+    case "8. Travis Scott Raffle Status":
+      console.log("RUNNING TRAVIS SCOTT RAFFLE STATUS MODULE");
+      push_trav_status();
       break;
     case "Exit":
       console.log(
