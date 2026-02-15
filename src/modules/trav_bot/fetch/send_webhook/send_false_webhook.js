@@ -1,6 +1,7 @@
 // ──────  send_webhook.js  ──────
 import axios from "axios";
 import FormData from "form-data";
+import sendErrorNotification from "../../../module_util/send_error_notification.js";
 
 export default async function sendFailWebhook(message) {
   const WEBHOOK_URL =
@@ -35,9 +36,6 @@ export default async function sendFailWebhook(message) {
     }
   } catch (error) {
     console.error("Webhook failed:", error.message);
-    if (error.response) {
-      console.error("Status:", error.response.status);
-      console.error("Data:", error.response.data);
-    }
+    await sendErrorNotification("Travis Scott Status", error);
   }
 }

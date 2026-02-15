@@ -1,6 +1,7 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
-import sleep from './sleep.js'; 
+import sleep from './sleep.js';
+import sendErrorNotification from '../../module_util/send_error_notification.js';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -58,11 +59,7 @@ export default async function sendWebhook(color, title, productDetails) {
             await sendWebhook(color, title, productDetails); // Retry
         } else {
             console.error("SHOPIFY WEBHOOK ERROR, contact Devs: ", error.message);
-            if (error.response) {
-                console.error('Response data:', error.response.data);
-                console.error('Response status:', error.response.status);
-                console.error('Response headers:', error.response.headers);
-            }
+            await sendErrorNotification("Shopify Monitor", error);
         }
     }
 }

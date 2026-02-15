@@ -2,6 +2,7 @@ import axios from 'axios';
 import FormData from 'form-data';
 import { resolve } from 'path';
 import delay from '../../module_util/delay.js';
+import sendErrorNotification from '../../module_util/send_error_notification.js';
 import dotenv from 'dotenv';
 
 dotenv.config({ path: resolve('../../../../.env') });
@@ -18,9 +19,6 @@ export default async function sendWebhook(headline, imageURL, postUrl, imageBuff
   // The Discord webhook
   const webhookUrl = process.env.NEWS_DISCORD_WEBHOOK;
   try {
-    console.log(`[DEBUG webhook] headline: ${headline}`);
-    console.log(`[DEBUG webhook] imageURL: ${imageURL}`);
-    console.log(`[DEBUG webhook] postUrl: ${postUrl}`);
     // Create embed structure object message to send to Discord
     const embed = {
       title: headline,
@@ -63,8 +61,6 @@ export default async function sendWebhook(headline, imageURL, postUrl, imageBuff
       },
     });
 
-    console.log(`[DEBUG webhook] response status: ${response.status}`);
-    console.log(`[DEBUG webhook] response data:`, JSON.stringify(response.data));
     // Log the remaining requests and the rate limit reset time
     const remainingRequests = response.headers['x-ratelimit-remaining'];
     const resetTime = response.headers['x-ratelimit-reset'];
@@ -86,13 +82,8 @@ export default async function sendWebhook(headline, imageURL, postUrl, imageBuff
       await delay(retryAfter); // Wait for the specified time before retrying
       await sendWebhook(headline, imageURL, postUrl, imageBuffer); // Retry the webhook after waiting
     } else {
-      // Log the error if it is not a rate limit error
       console.error('Error sending webhook:', error);
-      if (error.response) {
-        console.error('Response data:', error.response.data);
-        console.error('Response status:', error.response.status);
-        console.error('Response headers:', error.response.headers);
-      }
+      await sendErrorNotification("Push News", error);
     }
   }
 }

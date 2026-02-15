@@ -2,6 +2,7 @@ import axios from "axios";
 import FormData from "form-data";
 import { resolve } from "path";
 import delay from "../../module_util/delay.js";
+import sendErrorNotification from "../../module_util/send_error_notification.js";
 import dotenv from "dotenv";
 
 dotenv.config({ path: resolve("../../../../.env") });
@@ -111,13 +112,8 @@ export default async function sendWebhook(
       await delay(retryAfter); // Wait for the specified time before retrying
       await sendWebhook(productTitle, productPhoto, retailers); // Retry the webhook after waiting
     } else {
-      // Log the error if it is not a rate limit error
       console.error("Error sending webhook:", error);
-      if (error.response) {
-        console.error("Response data:", error.response.data);
-        console.error("Response status:", error.response.status);
-        console.error("Response headers:", error.response.headers);
-      }
+      await sendErrorNotification("Fetch Raffle", error);
     }
   }
 }

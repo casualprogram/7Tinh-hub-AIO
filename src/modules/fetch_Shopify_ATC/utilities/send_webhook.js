@@ -2,6 +2,7 @@ import axios from "axios";
 import FormData from "form-data";
 import { resolve } from "path";
 import delay from "../../module_util/delay.js";
+import sendErrorNotification from "../../module_util/send_error_notification.js";
 import dotenv from "dotenv";
 
 dotenv.config({ path: resolve("../../../../.env") });
@@ -83,9 +84,7 @@ export default async function sendWebhook(
       await sendWebhook(atcLinks, productPhoto, productTitle);
     } else {
       console.error("Error sending webhook:", error.message);
-      if (error.response) {
-        console.error("Response status:", error.response.status);
-      }
+      await sendErrorNotification("Shopify ATC", error);
     }
   }
 }
