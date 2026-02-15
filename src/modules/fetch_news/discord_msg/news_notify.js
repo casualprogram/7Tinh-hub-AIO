@@ -12,11 +12,15 @@ dotenv.config({ path: resolve('../../../../.env') });
  * @param {*} headline : The headline of the story.
  * @param {*} imageURL : The image of story.
  * @param {*} postUrl  : The URL of the story.
+ * @param {*} imageBuffer : Optional image buffer to upload directly (for Cloudflare-blocked images).
  */
-export default async function sendWebhook(headline, imageURL, postUrl) {
+export default async function sendWebhook(headline, imageURL, postUrl, imageBuffer = null) {
   // The Discord webhook
   const webhookUrl = process.env.NEWS_DISCORD_WEBHOOK;
   try {
+    console.log(`[DEBUG webhook] headline: ${headline}`);
+    console.log(`[DEBUG webhook] imageURL: ${imageURL}`);
+    console.log(`[DEBUG webhook] postUrl: ${postUrl}`);
     // Create embed structure object message to send to Discord
     const embed = {
       title: headline,
@@ -34,7 +38,7 @@ export default async function sendWebhook(headline, imageURL, postUrl) {
         },
       ],
       image: {
-        url: imageURL,
+        url: imageBuffer ? 'attachment://image.jpg' : imageURL,
       },
       footer: {
         text: 'powered by Casual Solutions',
@@ -47,6 +51,10 @@ export default async function sendWebhook(headline, imageURL, postUrl) {
     const formData = new FormData();
     // Append the embed object as a stringified JSON
     formData.append('payload_json', JSON.stringify({ embeds: [embed] }));
+    // If we have a downloaded image buffer, attach it directly
+    if (imageBuffer) {
+      formData.append('files[0]', imageBuffer, { filename: 'image.jpg', contentType: 'image/jpeg' });
+    }
 
     // Send the webhook message
     const response = await axios.post(webhookUrl, formData, {
@@ -55,6 +63,8 @@ export default async function sendWebhook(headline, imageURL, postUrl) {
       },
     });
 
+    console.log(`[DEBUG webhook] response status: ${response.status}`);
+    console.log(`[DEBUG webhook] response data:`, JSON.stringify(response.data));
     // Log the remaining requests and the rate limit reset time
     const remainingRequests = response.headers['x-ratelimit-remaining'];
     const resetTime = response.headers['x-ratelimit-reset'];
@@ -74,7 +84,7 @@ export default async function sendWebhook(headline, imageURL, postUrl) {
       const retryAfter = error.response.headers['retry-after'];
       console.log(`Rate limited! Retry after ${retryAfter} milliseconds.`);
       await delay(retryAfter); // Wait for the specified time before retrying
-      await sendWebhook(headline, imageURL, postUrl); // Retry the webhook after waiting
+      await sendWebhook(headline, imageURL, postUrl, imageBuffer); // Retry the webhook after waiting
     } else {
       // Log the error if it is not a rate limit error
       console.error('Error sending webhook:', error);

@@ -14,7 +14,7 @@ export default async function autoScroll(page) {
     for (let i = 0; i < maxAttempts; i++) {
         const currentCardCount = await page.evaluate(() => {
             window.scrollTo(0, document.body.scrollHeight);
-            return document.querySelectorAll('.megaFeedCard').length;
+            return document.querySelectorAll('.megaFeedCardRoot').length;
         });
         // Log the number of story cards found
         console.log(`Scroll attempt ${i + 1}: Found ${currentCardCount} story cards`);
